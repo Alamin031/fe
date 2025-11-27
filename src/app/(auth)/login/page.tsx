@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useOAuth } from "@/lib/oauth/oauth-context";
 import { useAuthStore } from "@/app/store/auth-store";
+import AuthService from "@/app/lib/api/services/auth.service";
 import { toast } from "sonner";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -54,41 +55,40 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    try {
+      const res = await AuthService.login({ email, password });
+      // normalize API user role ("management") to the app's User type ("admin" | "user")
+      const userToStore: User = {
+        ...res.user,
+        role:
+          res.user.role === "management"
+            ? "admin"
+            : (res.user.role as "admin" | "user"),
+      };
+      login(userToStore, res.token);
+      toast.success("Login successful");
+      if (res.user.role === "admin" || res.user.role === "management") {
+        router.push("/admin");
+      } else {
+        router.push("/account");
+      }
+    } catch (error: unknown) {
+      type ErrorResponse = {
+        response?: {
+          data?: {
+            error?: {
+              message?: string;
+            };
+          };
+        };
+      };
 
-    // Validate credentials
-    const demoAccount = demoAccounts.find(
-      (acc) => acc.email === email && acc.password === password
-    );
-
-    if (!demoAccount) {
-      toast.error("Invalid email or password");
+      const message =
+        (error as ErrorResponse).response?.data?.error?.message ??
+        (error instanceof Error ? error.message : "Invalid email or password");
+      toast.error(message);
+    } finally {
       setIsLoading(false);
-      return;
-    }
-
-    // Simulate login delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Create user object based on demo account
-    const userData: User = {
-      id: email === "admin@demo.com" ? "admin-1" : "user-1",
-      name: email === "admin@demo.com" ? "Admin User" : "John Doe",
-      email: email,
-      role: email === "admin@demo.com" ? "admin" : "user",
-      addresses: [], // or provide demo addresses if needed
-      createdAt: new Date().toISOString(), // or use a fixed date for demo
-    };
-
-    // Update auth store with user data
-    login(userData, "demo-token-123");
-
-    setIsLoading(false);
-
-    // Redirect based on account type
-    if (email === "admin@demo.com") {
-      router.push("/admin");
-    } else {
-      router.push("/account");
     }
   };
 

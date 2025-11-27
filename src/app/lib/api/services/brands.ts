@@ -1,20 +1,21 @@
 import { apiClient } from "../client"
 import { Brand, CreateBrandRequest, UpdateBrandRequest, BrandProductsResponse } from "../types"
+import { API_ENDPOINTS } from "../config"
 
 export const brandsService = {
   /**
    * Create a new brand (Admin only)
    */
   create: async (data: CreateBrandRequest): Promise<Brand> => {
-    const response = await apiClient.post<Brand>("/api/brands", data)
+    const response = await apiClient.post<Brand>(API_ENDPOINTS.BRANDS_CREATE, data)
     return response.data
   },
 
   /**
    * Get all brands
    */
-  getAll: async (page = 1, limit = 50): Promise<{ data: Brand[]; pagination: any }> => {
-    const response = await apiClient.get<{ data: Brand[]; pagination: any }>("/api/brands", {
+  getAll: async (page = 1, limit = 50): Promise<{ data: Brand[]; pagination: unknown }> => {
+    const response = await apiClient.get<{ data: Brand[]; pagination: unknown }>(API_ENDPOINTS.BRANDS_GET, {
       params: { page, limit },
     })
     return response.data
@@ -24,7 +25,7 @@ export const brandsService = {
    * Get featured brands
    */
   getFeatured: async (): Promise<Brand[]> => {
-    const response = await apiClient.get<Brand[]>("/api/brands/featured")
+    const response = await apiClient.get<Brand[]>(API_ENDPOINTS.BRANDS_FEATURED)
     return response.data
   },
 
@@ -32,7 +33,8 @@ export const brandsService = {
    * Get brand by slug
    */
   getBySlug: async (slug: string): Promise<Brand> => {
-    const response = await apiClient.get<Brand>(`/api/brands/${slug}`)
+    const endpoint = API_ENDPOINTS.BRANDS_SLUG.replace("{slug}", slug)
+    const response = await apiClient.get<Brand>(endpoint)
     return response.data
   },
 
@@ -40,7 +42,8 @@ export const brandsService = {
    * Get products by brand
    */
   getProducts: async (slug: string, page = 1, limit = 20): Promise<BrandProductsResponse> => {
-    const response = await apiClient.get<BrandProductsResponse>(`/api/brands/${slug}/products`, {
+    const endpoint = API_ENDPOINTS.BRANDS_PRODUCTS.replace("{slug}", slug)
+    const response = await apiClient.get<BrandProductsResponse>(endpoint, {
       params: { page, limit },
     })
     return response.data
@@ -50,7 +53,8 @@ export const brandsService = {
    * Update brand (Admin only)
    */
   update: async (id: string, data: UpdateBrandRequest): Promise<Brand> => {
-    const response = await apiClient.patch<Brand>(`/api/brands/${id}`, data)
+    const endpoint = API_ENDPOINTS.BRANDS_UPDATE.replace("{id}", id)
+    const response = await apiClient.patch<Brand>(endpoint, data)
     return response.data
   },
 
@@ -58,7 +62,8 @@ export const brandsService = {
    * Delete brand (Admin only)
    */
   delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/api/brands/${id}`)
+    const endpoint = API_ENDPOINTS.BRANDS_DELETE.replace("{id}", id)
+    await apiClient.delete(endpoint)
   },
 }
 

@@ -6,21 +6,22 @@ import {
   CategoryProductsResponse,
   ProductFilters,
 } from "../types"
+import { API_ENDPOINTS } from "../config"
 
 export const categoriesService = {
   /**
    * Create a new category (Admin only)
    */
   create: async (data: CreateCategoryRequest): Promise<Category> => {
-    const response = await apiClient.post<Category>("/api/categories", data)
+    const response = await apiClient.post<Category>(API_ENDPOINTS.CATEGORIES_CREATE, data)
     return response.data
   },
 
   /**
    * Get all categories
    */
-  getAll: async (page = 1, limit = 50): Promise<{ data: Category[]; pagination: any }> => {
-    const response = await apiClient.get<{ data: Category[]; pagination: any }>("/api/categories", {
+  getAll: async (page = 1, limit = 50): Promise<{ data: Category[]; pagination: unknown }> => {
+    const response = await apiClient.get<{ data: Category[]; pagination: unknown }>(API_ENDPOINTS.CATEGORIES_GET, {
       params: { page, limit },
     })
     return response.data
@@ -30,7 +31,7 @@ export const categoriesService = {
    * Get featured categories
    */
   getFeatured: async (): Promise<Category[]> => {
-    const response = await apiClient.get<Category[]>("/api/categories/featured")
+    const response = await apiClient.get<Category[]>(API_ENDPOINTS.CATEGORIES_FEATURED)
     return response.data
   },
 
@@ -38,7 +39,8 @@ export const categoriesService = {
    * Get category by slug
    */
   getBySlug: async (slug: string): Promise<Category> => {
-    const response = await apiClient.get<Category>(`/api/categories/${slug}`)
+    const endpoint = API_ENDPOINTS.CATEGORIES_SLUG.replace("{slug}", slug)
+    const response = await apiClient.get<Category>(endpoint)
     return response.data
   },
 
@@ -51,7 +53,8 @@ export const categoriesService = {
     page = 1,
     limit = 20,
   ): Promise<CategoryProductsResponse> => {
-    const response = await apiClient.get<CategoryProductsResponse>(`/api/categories/${slug}/products`, {
+    const endpoint = API_ENDPOINTS.CATEGORIES_PRODUCTS.replace("{slug}", slug)
+    const response = await apiClient.get<CategoryProductsResponse>(endpoint, {
       params: {
         page,
         limit,
@@ -65,7 +68,8 @@ export const categoriesService = {
    * Update category (Admin only)
    */
   update: async (id: string, data: UpdateCategoryRequest): Promise<Category> => {
-    const response = await apiClient.patch<Category>(`/api/categories/${id}`, data)
+    const endpoint = API_ENDPOINTS.CATEGORIES_UPDATE.replace("{id}", id)
+    const response = await apiClient.patch<Category>(endpoint, data)
     return response.data
   },
 
@@ -73,7 +77,8 @@ export const categoriesService = {
    * Delete category (Admin only)
    */
   delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/api/categories/${id}`)
+    const endpoint = API_ENDPOINTS.CATEGORIES_DELETE.replace("{id}", id)
+    await apiClient.delete(endpoint)
   },
 }
 

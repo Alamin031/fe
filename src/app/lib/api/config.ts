@@ -75,6 +75,7 @@ export const API_ENDPOINTS = {
   ORDERS_UPDATE_STATUS: "/orders/{id}/status",
   ORDERS_INVOICE: "/orders/{id}/invoice",
   ORDERS_CALCULATE_EMI: "/orders/calculate-emi",
+  TRACK_ORDER: "/orders/track",
 
   // Warranty
   WARRANTY_ACTIVATE: "/warranty/activate",
@@ -84,12 +85,17 @@ export const API_ENDPOINTS = {
   // Giveaways
   GIVEAWAYS_CREATE: "/giveaways",
   GIVEAWAYS_GET: "/giveaways",
+  GIVEAWAYS_GET_ONE: "/giveaways/{id}",
+  GIVEAWAYS_GET_BY_PRODUCT: "/giveaways/product",
   GIVEAWAYS_EXPORT: "/giveaways/export",
+  GIVEAWAYS_DELETE: "/giveaways/{id}",
 
   // Policies
   POLICIES_CREATE: "/policies",
   POLICIES_GET: "/policies",
   POLICIES_SLUG: "/policies/{slug}",
+  POLICIES_GET_ONE: "/policies/{id}",
+  POLICIES_PUBLISHED: "/policies/published",
   POLICIES_UPDATE: "/policies/{slug}",
   POLICIES_DELETE: "/policies/{slug}",
 
@@ -97,17 +103,32 @@ export const API_ENDPOINTS = {
   FAQS_CREATE: "/faqs",
   FAQS_GET: "/faqs",
   FAQS_GET_ONE: "/faqs/{id}",
+  FAQS_GET_BY_CATEGORY: "/faqs/category",
+  FAQS_GET_BY_PRODUCT: "/faqs/product",
+  FAQS_GET_PUBLISHED: "/faqs/published",
   FAQS_UPDATE: "/faqs/{id}",
   FAQS_DELETE: "/faqs/{id}",
+  FAQS_SEARCH: "/faqs/search",
 
   // Reviews
   REVIEWS_CREATE: "/reviews",
   REVIEWS_GET: "/reviews/{productId}",
+  REVIEWS_GET_ONE: "/reviews/{id}",
+  REVIEWS_UPDATE: "/reviews/{id}",
   REVIEWS_DELETE: "/reviews/{id}",
+  REVIEWS_MARK_HELPFUL: "/reviews/{id}/helpful",
+  REVIEWS_MARK_UNHELPFUL: "/reviews/{id}/unhelpful",
+  REVIEWS_GET_BY_USER: "/reviews/user",
+  REVIEWS_GET_VERIFIED: "/reviews/verified",
 
   // Loyalty
   LOYALTY_POINTS: "/loyalty/{userId}/points",
   LOYALTY_REDEEM: "/loyalty/{userId}/redeem",
+  LOYALTY_HISTORY: "/loyalty/{userId}/history",
+  LOYALTY_OPTIONS: "/loyalty/{userId}/options",
+  LOYALTY_BALANCE: "/loyalty/{userId}/balance",
+  LOYALTY_TIER: "/loyalty/{userId}/tier",
+  LOYALTY_ADD_POINTS: "/loyalty/{userId}/add-points",
 
   // SEO
   SEO_PRODUCT: "/seo/products/{id}",
@@ -117,9 +138,23 @@ export const API_ENDPOINTS = {
 
   // Marketing
   MARKETING_EMAIL: "/marketing/email",
+  MARKETING_CAMPAIGN_STATUS: "/marketing/campaigns/{campaignId}",
+  MARKETING_CAMPAIGNS: "/marketing/campaigns",
+  MARKETING_BANNERS: "/marketing/banners",
+  MARKETING_BANNERS_ACTIVE: "/marketing/banners/active",
+  MARKETING_SCHEDULE_CAMPAIGN: "/marketing/schedule-campaign",
+  MARKETING_SEGMENTS: "/marketing/segments",
+  MARKETING_SMS: "/marketing/sms",
 
   // Admin
   ADMIN_DASHBOARD: "/admin/dashboard",
   ADMIN_ANALYTICS: "/admin/analytics",
   ADMIN_STOCK_ALERTS: "/admin/stock-alerts",
+
+  // Hero Banner
+  HEROBANNER_CREATE: "/herobanner",
+  HEROBANNER_GET_ALL: "/herobanner",
+  HEROBANNER_GET_ONE: "/herobanner/{id}",
+  HEROBANNER_UPDATE: "/herobanner/{id}",
+  HEROBANNER_DELETE: "/herobanner/{id}"
 }

@@ -7,21 +7,22 @@ import {
   CalculateEMIRequest,
   CalculateEMIResponse,
 } from "../types"
+import { API_ENDPOINTS } from "../config"
 
 export const ordersService = {
   /**
    * Create a new order
    */
   create: async (data: CreateOrderRequest): Promise<Order> => {
-    const response = await apiClient.post<Order>("/api/orders", data)
+    const response = await apiClient.post<Order>(API_ENDPOINTS.ORDERS_CREATE, data)
     return response.data
   },
 
   /**
    * Get all orders (Admin/Management only)
    */
-  getAll: async (page = 1, limit = 20): Promise<{ data: Order[]; pagination: any }> => {
-    const response = await apiClient.get<{ data: Order[]; pagination: any }>("/api/orders", {
+  getAll: async (page = 1, limit = 20): Promise<{ data: Order[]; pagination: unknown }> => {
+    const response = await apiClient.get<{ data: Order[]; pagination: unknown }>(API_ENDPOINTS.ORDERS_GET, {
       params: { page, limit },
     })
     return response.data
@@ -31,7 +32,8 @@ export const ordersService = {
    * Get order by ID
    */
   getById: async (id: string): Promise<Order> => {
-    const response = await apiClient.get<Order>(`/api/orders/${id}`)
+    const endpoint = API_ENDPOINTS.ORDERS_GET_ONE.replace("{id}", id)
+    const response = await apiClient.get<Order>(endpoint)
     return response.data
   },
 
@@ -39,7 +41,8 @@ export const ordersService = {
    * Update order status (Admin/Management only)
    */
   updateStatus: async (id: string, data: UpdateOrderStatusRequest): Promise<Order> => {
-    const response = await apiClient.patch<Order>(`/api/orders/${id}/status`, data)
+    const endpoint = API_ENDPOINTS.ORDERS_UPDATE_STATUS.replace("{id}", id)
+    const response = await apiClient.patch<Order>(endpoint, data)
     return response.data
   },
 
@@ -47,7 +50,7 @@ export const ordersService = {
    * Get order by order number
    */
   getByOrderNumber: async (orderNumber: string): Promise<Order> => {
-    const response = await apiClient.get<Order>("/api/orders/search", {
+    const response = await apiClient.get<Order>(API_ENDPOINTS.PRODUCTS_SEARCH, {
       params: { orderNumber },
     })
     return response.data
@@ -57,7 +60,8 @@ export const ordersService = {
    * Cancel order
    */
   cancel: async (id: string, reason?: string): Promise<Order> => {
-    const response = await apiClient.post<Order>(`/api/orders/${id}/cancel`, { reason })
+    const endpoint = `/orders/${id}/cancel`
+    const response = await apiClient.post<Order>(endpoint, { reason })
     return response.data
   },
 
@@ -65,7 +69,8 @@ export const ordersService = {
    * Generate invoice for order
    */
   generateInvoice: async (id: string): Promise<OrderInvoiceResponse> => {
-    const response = await apiClient.get<OrderInvoiceResponse>(`/api/orders/${id}/invoice`)
+    const endpoint = API_ENDPOINTS.ORDERS_INVOICE.replace("{id}", id)
+    const response = await apiClient.get<OrderInvoiceResponse>(endpoint)
     return response.data
   },
 
@@ -73,7 +78,7 @@ export const ordersService = {
    * Calculate EMI for amount
    */
   calculateEMI: async (data: CalculateEMIRequest): Promise<CalculateEMIResponse> => {
-    const response = await apiClient.post<CalculateEMIResponse>("/api/orders/calculate-emi", data)
+    const response = await apiClient.post<CalculateEMIResponse>(API_ENDPOINTS.ORDERS_CALCULATE_EMI, data)
     return response.data
   },
 
@@ -86,7 +91,7 @@ export const ordersService = {
     estimatedDelivery: string
     trackingUpdates: Array<{ date: string; status: string; location: string }>
   }> => {
-    const response = await apiClient.get("/api/orders/track", {
+    const response = await apiClient.get(API_ENDPOINTS.TRACK_ORDER || "/orders/track", {
       params: { orderNumber },
     })
     return response.data

@@ -1,12 +1,14 @@
 import { apiClient } from "../client"
 import { SEOMetadata, SitemapEntry } from "../types"
+import { API_ENDPOINTS } from "../config"
 
 export const seoService = {
   /**
    * Get product SEO metadata
    */
   getProductSEO: async (productId: string): Promise<SEOMetadata> => {
-    const response = await apiClient.get<SEOMetadata>(`/api/seo/products/${productId}`)
+    const endpoint = API_ENDPOINTS.SEO_PRODUCT.replace("{id}", productId)
+    const response = await apiClient.get<SEOMetadata>(endpoint)
     return response.data
   },
 
@@ -14,7 +16,8 @@ export const seoService = {
    * Update product SEO metadata (Admin only)
    */
   updateProductSEO: async (productId: string, data: Partial<SEOMetadata>): Promise<SEOMetadata> => {
-    const response = await apiClient.patch<SEOMetadata>(`/api/seo/products/${productId}`, data)
+    const endpoint = API_ENDPOINTS.SEO_PRODUCT.replace("{id}", productId)
+    const response = await apiClient.patch<SEOMetadata>(endpoint, data)
     return response.data
   },
 
@@ -22,7 +25,8 @@ export const seoService = {
    * Get category SEO metadata
    */
   getCategorySEO: async (categoryId: string): Promise<SEOMetadata> => {
-    const response = await apiClient.get<SEOMetadata>(`/api/seo/categories/${categoryId}`)
+    const endpoint = API_ENDPOINTS.SEO_CATEGORY.replace("{id}", categoryId)
+    const response = await apiClient.get<SEOMetadata>(endpoint)
     return response.data
   },
 
@@ -30,7 +34,8 @@ export const seoService = {
    * Update category SEO metadata (Admin only)
    */
   updateCategorySEO: async (categoryId: string, data: Partial<SEOMetadata>): Promise<SEOMetadata> => {
-    const response = await apiClient.patch<SEOMetadata>(`/api/seo/categories/${categoryId}`, data)
+    const endpoint = API_ENDPOINTS.SEO_CATEGORY.replace("{id}", categoryId)
+    const response = await apiClient.patch<SEOMetadata>(endpoint, data)
     return response.data
   },
 
@@ -38,7 +43,8 @@ export const seoService = {
    * Get brand SEO metadata
    */
   getBrandSEO: async (brandId: string): Promise<SEOMetadata> => {
-    const response = await apiClient.get<SEOMetadata>(`/api/seo/brands/${brandId}`)
+    const endpoint = API_ENDPOINTS.SEO_BRAND.replace("{id}", brandId)
+    const response = await apiClient.get<SEOMetadata>(endpoint)
     return response.data
   },
 
@@ -46,7 +52,8 @@ export const seoService = {
    * Update brand SEO metadata (Admin only)
    */
   updateBrandSEO: async (brandId: string, data: Partial<SEOMetadata>): Promise<SEOMetadata> => {
-    const response = await apiClient.patch<SEOMetadata>(`/api/seo/brands/${brandId}`, data)
+    const endpoint = API_ENDPOINTS.SEO_BRAND.replace("{id}", brandId)
+    const response = await apiClient.patch<SEOMetadata>(endpoint, data)
     return response.data
   },
 
@@ -54,7 +61,7 @@ export const seoService = {
    * Generate sitemap data
    */
   generateSitemap: async (): Promise<SitemapEntry[]> => {
-    const response = await apiClient.get<SitemapEntry[]>("/api/seo/sitemap")
+    const response = await apiClient.get<SitemapEntry[]>(API_ENDPOINTS.SEO_SITEMAP)
     return response.data
   },
 

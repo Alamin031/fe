@@ -1,12 +1,13 @@
 import { apiClient } from "../client"
 import { SendMarketingEmailRequest, MarketingEmailResponse } from "../types"
+import { API_ENDPOINTS } from "../config"
 
 export const marketingService = {
   /**
    * Send marketing email
    */
   sendEmail: async (data: SendMarketingEmailRequest): Promise<MarketingEmailResponse[]> => {
-    const response = await apiClient.post<MarketingEmailResponse[]>("/api/marketing/email", data)
+    const response = await apiClient.post<MarketingEmailResponse[]>(API_ENDPOINTS.MARKETING_EMAIL, data)
     return response.data
   },
 
@@ -23,7 +24,8 @@ export const marketingService = {
     createdAt: string
     updatedAt: string
   }> => {
-    const response = await apiClient.get(`/api/marketing/campaigns/${campaignId}`)
+    const endpoint = API_ENDPOINTS.MARKETING_CAMPAIGN_STATUS?.replace("{campaignId}", campaignId) || `/marketing/campaigns/${campaignId}`
+    const response = await apiClient.get(endpoint)
     return response.data
   },
 
@@ -40,9 +42,15 @@ export const marketingService = {
       clickRate: number
       createdAt: string
     }>
-    pagination: any
+    pagination: {
+      total: number
+      currentPage: number
+      perPage: number
+      totalPages: number
+    }
   }> => {
-    const response = await apiClient.get("/api/marketing/campaigns", {
+    const endpoint = API_ENDPOINTS.MARKETING_CAMPAIGNS || "/marketing/campaigns"
+    const response = await apiClient.get(endpoint, {
       params: { page, limit },
     })
     return response.data
@@ -67,7 +75,8 @@ export const marketingService = {
     link?: string
     isActive: boolean
   }> => {
-    const response = await apiClient.post("/api/marketing/banners", data)
+    const endpoint = API_ENDPOINTS.MARKETING_BANNERS || "/marketing/banners"
+    const response = await apiClient.post(endpoint, data)
     return response.data
   },
 
@@ -82,7 +91,8 @@ export const marketingService = {
     link?: string
     displayPosition: string
   }>> => {
-    const response = await apiClient.get("/api/marketing/banners/active")
+    const endpoint = API_ENDPOINTS.MARKETING_BANNERS_ACTIVE || "/marketing/banners/active"
+    const response = await apiClient.get(endpoint)
     return response.data
   },
 
@@ -101,7 +111,8 @@ export const marketingService = {
     status: string
     scheduledAt: string
   }> => {
-    const response = await apiClient.post("/api/marketing/schedule-campaign", data)
+    const endpoint = API_ENDPOINTS.MARKETING_SCHEDULE_CAMPAIGN || "/marketing/schedule-campaign"
+    const response = await apiClient.post(endpoint, data)
     return response.data
   },
 
@@ -115,7 +126,8 @@ export const marketingService = {
     customerCount: number
     createdAt: string
   }>> => {
-    const response = await apiClient.get("/api/marketing/segments")
+    const endpoint = API_ENDPOINTS.MARKETING_SEGMENTS || "/marketing/segments"
+    const response = await apiClient.get(endpoint)
     return response.data
   },
 
@@ -131,7 +143,8 @@ export const marketingService = {
     sentCount: number
     failedCount: number
   }> => {
-    const response = await apiClient.post("/api/marketing/sms", data)
+    const endpoint = API_ENDPOINTS.MARKETING_SMS || "/marketing/sms"
+    const response = await apiClient.post(endpoint, data)
     return response.data
   },
 }

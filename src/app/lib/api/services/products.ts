@@ -7,13 +7,14 @@ import {
   ProductSearchResponse,
   ProductFilters,
 } from "../types"
+import { API_ENDPOINTS } from "../config"
 
 export const productsService = {
   /**
    * Create a new product (Admin/Management only)
    */
   create: async (data: CreateProductRequest): Promise<Product> => {
-    const response = await apiClient.post<Product>("/api/products", data)
+    const response = await apiClient.post<Product>(API_ENDPOINTS.PRODUCTS_CREATE, data)
     return response.data
   },
 
@@ -21,7 +22,7 @@ export const productsService = {
    * Get all products with optional filters
    */
   getAll: async (filters?: ProductFilters, page = 1, limit = 20): Promise<ProductListResponse> => {
-    const response = await apiClient.get<ProductListResponse>("/api/products", {
+    const response = await apiClient.get<ProductListResponse>(API_ENDPOINTS.PRODUCTS_GET, {
       params: {
         page,
         limit,
@@ -35,7 +36,7 @@ export const productsService = {
    * Get featured products
    */
   getFeatured: async (limit = 10): Promise<Product[]> => {
-    const response = await apiClient.get<Product[]>("/api/products/featured", {
+    const response = await apiClient.get<Product[]>(API_ENDPOINTS.PRODUCTS_FEATURED, {
       params: { limit },
     })
     return response.data
@@ -45,7 +46,7 @@ export const productsService = {
    * Get new products
    */
   getNew: async (limit = 10): Promise<Product[]> => {
-    const response = await apiClient.get<Product[]>("/api/products/new", {
+    const response = await apiClient.get<Product[]>(API_ENDPOINTS.PRODUCTS_NEW, {
       params: { limit },
     })
     return response.data
@@ -55,7 +56,7 @@ export const productsService = {
    * Get hot products
    */
   getHot: async (limit = 10): Promise<Product[]> => {
-    const response = await apiClient.get<Product[]>("/api/products/hot", {
+    const response = await apiClient.get<Product[]>(API_ENDPOINTS.PRODUCTS_HOT, {
       params: { limit },
     })
     return response.data
@@ -65,7 +66,7 @@ export const productsService = {
    * Search products
    */
   search: async (query: string, page = 1, limit = 20): Promise<ProductSearchResponse> => {
-    const response = await apiClient.get<ProductSearchResponse>("/api/products/search", {
+    const response = await apiClient.get<ProductSearchResponse>(API_ENDPOINTS.PRODUCTS_SEARCH, {
       params: { query, page, limit },
     })
     return response.data
@@ -75,7 +76,8 @@ export const productsService = {
    * Get product by slug
    */
   getBySlug: async (slug: string): Promise<Product> => {
-    const response = await apiClient.get<Product>(`/api/products/${slug}`)
+    const endpoint = API_ENDPOINTS.PRODUCTS_SLUG.replace("{slug}", slug)
+    const response = await apiClient.get<Product>(endpoint)
     return response.data
   },
 
@@ -83,7 +85,8 @@ export const productsService = {
    * Get product by ID
    */
   getById: async (id: string): Promise<Product> => {
-    const response = await apiClient.get<Product>(`/api/products/${id}`)
+    const endpoint = API_ENDPOINTS.PRODUCTS_UPDATE.replace("{id}", id)
+    const response = await apiClient.get<Product>(endpoint)
     return response.data
   },
 
@@ -91,7 +94,8 @@ export const productsService = {
    * Update product (Admin/Management only)
    */
   update: async (id: string, data: UpdateProductRequest): Promise<Product> => {
-    const response = await apiClient.patch<Product>(`/api/products/${id}`, data)
+    const endpoint = API_ENDPOINTS.PRODUCTS_UPDATE.replace("{id}", id)
+    const response = await apiClient.patch<Product>(endpoint, data)
     return response.data
   },
 
@@ -99,7 +103,8 @@ export const productsService = {
    * Delete product (Admin only)
    */
   delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/api/products/${id}`)
+    const endpoint = API_ENDPOINTS.PRODUCTS_DELETE.replace("{id}", id)
+    await apiClient.delete(endpoint)
   },
 }
 

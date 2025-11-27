@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiClient } from "../client"
 import { DashboardStats, AnalyticsData, StockAlert } from "../types"
+import { API_ENDPOINTS } from "../config"
 
 export const adminService = {
   /**
    * Get dashboard statistics
    */
   getDashboard: async (): Promise<DashboardStats> => {
-    const response = await apiClient.get<DashboardStats>("/api/admin/dashboard")
+    const response = await apiClient.get<DashboardStats>(API_ENDPOINTS.ADMIN_DASHBOARD)
     return response.data
   },
 
@@ -18,7 +20,7 @@ export const adminService = {
     startDate?: string,
     endDate?: string,
   ): Promise<AnalyticsData> => {
-    const response = await apiClient.get<AnalyticsData>("/api/admin/analytics", {
+    const response = await apiClient.get<AnalyticsData>(API_ENDPOINTS.ADMIN_ANALYTICS, {
       params: { period, startDate, endDate },
     })
     return response.data
@@ -27,8 +29,8 @@ export const adminService = {
   /**
    * Get stock alerts
    */
-  getStockAlerts: async (status?: "low" | "critical", page = 1, limit = 20): Promise<{ data: StockAlert[]; pagination: any }> => {
-    const response = await apiClient.get<{ data: StockAlert[]; pagination: any }>("/api/admin/stock-alerts", {
+  getStockAlerts: async (status?: "low" | "critical", page = 1, limit = 20): Promise<{ data: StockAlert[]; pagination: unknown }> => {
+    const response = await apiClient.get<{ data: StockAlert[]; pagination: unknown }>(API_ENDPOINTS.ADMIN_STOCK_ALERTS, {
       params: { status, page, limit },
     })
     return response.data

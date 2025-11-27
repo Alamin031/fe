@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { AuthService } from "../../lib/api/services/auth.service"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight } from "lucide-react"
@@ -16,13 +17,49 @@ export default function RegisterPage() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+    terms: false,
+  })
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value, type, checked } = e.target
+    setForm((prev) => ({
+      ...prev,
+      [id]: type === "checkbox" ? checked : value,
+    }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setIsLoading(false)
-    router.push("/account")
+    setError(null)
+    try {
+      await AuthService.register({
+        name: `${form.firstName} ${form.lastName}`,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+      })
+      router.push("/account")
+    } catch (err: unknown) {
+      let message = "Registration failed"
+      if (err instanceof Error) {
+        message = err.message
+      } else if (typeof err === "object" && err !== null) {
+        const e = err as { response?: { data?: { message?: string } } }
+        message = e.response?.data?.message ?? message
+      }
+      setError(message)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -38,12 +75,25 @@ export default function RegisterPage() {
             <Label htmlFor="firstName">First Name</Label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input id="firstName" placeholder="John" className="pl-10" required />
+              <Input
+                id="firstName"
+                placeholder="John"
+                className="pl-10"
+                required
+                value={form.firstName}
+                onChange={handleChange}
+              />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="lastName">Last Name</Label>
-            <Input id="lastName" placeholder="Doe" required />
+            <Input
+              id="lastName"
+              placeholder="Doe"
+              required
+              value={form.lastName}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
@@ -51,7 +101,15 @@ export default function RegisterPage() {
           <Label htmlFor="email">Email</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input id="email" type="email" placeholder="john@example.com" className="pl-10" required />
+            <Input
+              id="email"
+              type="email"
+              placeholder="john@example.com"
+              className="pl-10"
+              required
+              value={form.email}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
@@ -59,7 +117,15 @@ export default function RegisterPage() {
           <Label htmlFor="phone">Phone Number</Label>
           <div className="relative">
             <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input id="phone" type="tel" placeholder="+91 98765 43210" className="pl-10" required />
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="+91 98765 43210"
+              className="pl-10"
+              required
+              value={form.phone}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
@@ -73,6 +139,8 @@ export default function RegisterPage() {
               placeholder="Create a password"
               className="pl-10 pr-10"
               required
+              value={form.password}
+              onChange={handleChange}
             />
             <button
               type="button"
@@ -88,7 +156,13 @@ export default function RegisterPage() {
         </div>
 
         <div className="flex items-start gap-2">
-          <Checkbox id="terms" className="mt-1" required />
+          <Checkbox
+            id="terms"
+            className="mt-1"
+            required
+            checked={form.terms}
+            onCheckedChange={(checked) => setForm((prev) => ({ ...prev, terms: !!checked }))}
+          />
           <Label htmlFor="terms" className="text-sm font-normal leading-tight">
             I agree to the{" "}
             <Link href="/terms" className="text-primary hover:underline">
@@ -100,6 +174,10 @@ export default function RegisterPage() {
             </Link>
           </Label>
         </div>
+
+        {error && (
+          <div className="text-sm text-red-600 font-medium">{error}</div>
+        )}
 
         <Button type="submit" className="w-full gap-2" disabled={isLoading}>
           {isLoading ? "Creating account..." : "Create account"}
