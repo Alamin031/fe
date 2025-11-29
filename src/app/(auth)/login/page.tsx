@@ -72,10 +72,29 @@ export default function LoginPage() {
       if (!token) throw new Error("No token received from API");
       login(userToStore, token);
       toast.success("Login successful");
-      if (res.user.role === "admin" || res.user.role === "management") {
-        router.push("/admin");
+
+      // Use the 'from' parameter if available and valid
+      if (fromParam && (fromParam.startsWith("/admin") || fromParam.startsWith("/account"))) {
+        // Verify the user has access to the requested route based on role
+        if (fromParam.startsWith("/admin") && (res.user.role === "admin" || res.user.role === "management")) {
+          router.push(fromParam);
+        } else if (fromParam.startsWith("/account") && res.user.role === "user") {
+          router.push(fromParam);
+        } else {
+          // Redirect to default based on role
+          if (res.user.role === "admin" || res.user.role === "management") {
+            router.push("/admin");
+          } else {
+            router.push("/account");
+          }
+        }
       } else {
-        router.push("/account");
+        // Default redirect based on role
+        if (res.user.role === "admin" || res.user.role === "management") {
+          router.push("/admin");
+        } else {
+          router.push("/account");
+        }
       }
     } catch (error: unknown) {
       type ErrorResponse = {
