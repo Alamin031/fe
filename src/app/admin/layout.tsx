@@ -1,5 +1,3 @@
-'use client'
-
 import type React from 'react';
 import type {Metadata} from 'next';
 import Link from 'next/link';
@@ -20,7 +18,11 @@ import {
 import {Badge} from '../components/ui/badge';
 import {Suspense} from 'react';
 import {AdminHeader} from '../components/admin/admin-header';
-import {withProtectedRoute} from '../lib/auth/protected-route';
+
+export const metadata: Metadata = {
+  title: 'Admin Dashboard',
+  description: 'Manage your e-commerce store.',
+};
 
 const sidebarLinks = [
   {href: '/admin', label: 'Dashboard', icon: LayoutDashboard},
@@ -44,7 +46,7 @@ const sidebarLinks = [
   {href: '/admin/settings', label: 'Settings', icon: Settings},
 ];
 
-function AdminLayout({children}: {children: React.ReactNode}) {
+export default function AdminLayout({children}: {children: React.ReactNode}) {
   return (
     <div className="flex min-h-screen">
       <Suspense fallback={<div>Loading...</div>}>
