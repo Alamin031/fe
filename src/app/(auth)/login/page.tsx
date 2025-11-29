@@ -25,6 +25,7 @@ import { Checkbox } from "../../components/ui/checkbox";
 import { Separator } from "../../components/ui/separator";
 import { User } from "@/app/types";
 import { useOAuth } from "@/app/lib/oauth";
+import { useSearchParams } from "next/navigation";
 
 const demoAccounts = [
   {
@@ -46,12 +47,14 @@ const demoAccounts = [
 export default function LoginPage() {
   const authService = new AuthService();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { initiateOAuth, isOAuthLoading } = useOAuth();
   const { login } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const fromParam = searchParams.get("from");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,10 +72,29 @@ export default function LoginPage() {
       if (!token) throw new Error("No token received from API");
       login(userToStore, token);
       toast.success("Login successful");
-      if (res.user.role === "admin" || res.user.role === "management") {
-        router.push("/admin");
+
+      // Use the 'from' parameter if available and valid
+      if (fromParam && (fromParam.startsWith("/admin") || fromParam.startsWith("/account"))) {
+        // Verify the user has access to the requested route based on role
+        if (fromParam.startsWith("/admin") && (res.user.role === "admin" || res.user.role === "management")) {
+          router.push(fromParam);
+        } else if (fromParam.startsWith("/account") && res.user.role === "user") {
+          router.push(fromParam);
+        } else {
+          // Redirect to default based on role
+          if (res.user.role === "admin" || res.user.role === "management") {
+            router.push("/admin");
+          } else {
+            router.push("/account");
+          }
+        }
       } else {
-        router.push("/account");
+        // Default redirect based on role
+        if (res.user.role === "admin" || res.user.role === "management") {
+          router.push("/admin");
+        } else {
+          router.push("/account");
+        }
       }
     } catch (error: unknown) {
       type ErrorResponse = {
@@ -112,11 +134,12 @@ export default function LoginPage() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Create user object based on demo account
+    const isAdmin = demoEmail === "admin@demo.com";
     const userData: User = {
-      id: demoEmail === "admin@demo.com" ? "admin-1" : "user-1",
-      name: demoEmail === "admin@demo.com" ? "Admin User" : "John Doe",
+      id: isAdmin ? "admin-1" : "user-1",
+      name: isAdmin ? "Admin User" : "John Doe",
       email: demoEmail,
-      role: demoEmail === "admin@demo.com" ? "admin" : "user",
+      role: isAdmin ? "admin" : "user",
       addresses: [],
       createdAt: new Date().toISOString(),
     };
@@ -126,11 +149,28 @@ export default function LoginPage() {
 
     setIsLoading(false);
 
-    // Redirect based on account type
-    if (demoEmail === "admin@demo.com") {
-      router.push("/admin");
+    // Use the 'from' parameter if available and valid
+    if (fromParam && (fromParam.startsWith("/admin") || fromParam.startsWith("/account"))) {
+      // Verify the user has access to the requested route based on role
+      if (fromParam.startsWith("/admin") && isAdmin) {
+        router.push(fromParam);
+      } else if (fromParam.startsWith("/account") && !isAdmin) {
+        router.push(fromParam);
+      } else {
+        // Redirect to default based on role
+        if (isAdmin) {
+          router.push("/admin");
+        } else {
+          router.push("/account");
+        }
+      }
     } else {
-      router.push("/account");
+      // Default redirect based on role
+      if (isAdmin) {
+        router.push("/admin");
+      } else {
+        router.push("/account");
+      }
     }
   };
 
