@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { Bell, LogOut, Search, User, ChevronDown, AlertCircle } from "lucide-react"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
-import { useAuthStore } from "@/store/auth-store"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu"
-import { useProductNotifyStore } from "@/store/product-notify-store"
+import { useAuthStore } from "@/app/store/auth-store"
+import { useProductNotifyStore } from "@/app/store/product-notify-store"
 
 export function AdminHeader() {
   const router = useRouter()

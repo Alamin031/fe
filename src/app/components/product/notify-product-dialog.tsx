@@ -1,15 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { AlertCircle, X } from "lucide-react"
+import { AlertCircle } from "lucide-react"
 import { Button } from "../ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog"
-import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
-import { useProductNotifyStore } from "@/store/product-notify-store"
-import { useAuthStore } from "@/store/auth-store"
 import type { Product } from "@/app/types"
+import { useAuthStore } from "@/app/store/auth-store"
+import { useProductNotifyStore } from "@/app/store/product-notify-store"
 
 interface NotifyProductDialogProps {
   product: Product
@@ -93,7 +92,7 @@ export function NotifyProductDialog({ product, open, onOpenChange }: NotifyProdu
               </svg>
             </div>
             <h3 className="font-semibold">Thank You!</h3>
-            <p className="text-sm text-muted-foreground">Your notification has been sent to our admin team. We'll review it shortly.</p>
+            <p className="text-sm text-muted-foreground">Your notification has been sent to our admin team. We&apos;ll review it shortly.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">

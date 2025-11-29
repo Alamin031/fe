@@ -7,13 +7,13 @@ import { Badge } from "../../components/ui/badge"
 import { Checkbox } from "../../components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
 import { AlertCircle, Trash2, CheckCircle2, Clock, Filter, MoreVertical } from "lucide-react"
-import { useProductNotifyStore, ProductNotification } from "@/store/product-notify-store"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu"
+import { ProductNotification, useProductNotifyStore } from "@/app/store/product-notify-store"
 
 export default function NotifyProductsPage() {
   const { notifications, markAsResolved, removeNotification } = useProductNotifyStore()
