@@ -418,10 +418,9 @@ export interface FAQ {
   id: string
   question: string
   answer: string
-  category?: string
-  productId?: string
-  order?: number
-  isPublished: boolean
+  categoryIds?: string[]
+  productIds?: string[]
+  orderIndex?: number
   createdAt: string
   updatedAt: string
 }
