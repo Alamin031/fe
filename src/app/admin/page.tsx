@@ -173,3 +173,9 @@ function AdminDashboard() {
     </div>
   )
 }
+
+export default withProtectedRoute(AdminDashboard, {
+  requiredRoles: ["admin"],
+  fallbackTo: "/login",
+  showLoader: true,
+})
