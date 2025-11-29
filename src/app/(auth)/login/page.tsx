@@ -134,11 +134,12 @@ export default function LoginPage() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Create user object based on demo account
+    const isAdmin = demoEmail === "admin@demo.com";
     const userData: User = {
-      id: demoEmail === "admin@demo.com" ? "admin-1" : "user-1",
-      name: demoEmail === "admin@demo.com" ? "Admin User" : "John Doe",
+      id: isAdmin ? "admin-1" : "user-1",
+      name: isAdmin ? "Admin User" : "John Doe",
       email: demoEmail,
-      role: demoEmail === "admin@demo.com" ? "admin" : "user",
+      role: isAdmin ? "admin" : "user",
       addresses: [],
       createdAt: new Date().toISOString(),
     };
@@ -148,11 +149,28 @@ export default function LoginPage() {
 
     setIsLoading(false);
 
-    // Redirect based on account type
-    if (demoEmail === "admin@demo.com") {
-      router.push("/admin");
+    // Use the 'from' parameter if available and valid
+    if (fromParam && (fromParam.startsWith("/admin") || fromParam.startsWith("/account"))) {
+      // Verify the user has access to the requested route based on role
+      if (fromParam.startsWith("/admin") && isAdmin) {
+        router.push(fromParam);
+      } else if (fromParam.startsWith("/account") && !isAdmin) {
+        router.push(fromParam);
+      } else {
+        // Redirect to default based on role
+        if (isAdmin) {
+          router.push("/admin");
+        } else {
+          router.push("/account");
+        }
+      }
     } else {
-      router.push("/account");
+      // Default redirect based on role
+      if (isAdmin) {
+        router.push("/admin");
+      } else {
+        router.push("/account");
+      }
     }
   };
 
