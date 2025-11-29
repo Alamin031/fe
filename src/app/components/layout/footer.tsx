@@ -19,7 +19,7 @@ import { Button } from "../ui/button"
 const footerLinks = {
   shop: [
     { name: "All Products", href: "/products" },
-    { name: "Phones", href: "/category/phones" },
+    { name: "Smartphones", href: "/category/smartphones" },
     { name: "Laptops", href: "/category/laptops" },
     { name: "Tablets", href: "/category/tablets" },
     { name: "Accessories", href: "/category/accessories" },

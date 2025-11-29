@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react"
 import { cn } from "@/app/lib/utils"
 const megaMenuData = {
   categories: [
-    { name: "Phones", slug: "phones", image: "/modern-smartphone.png" },
+    { name: "Smartphones", slug: "smartphones", image: "/modern-smartphone.png" },
     { name: "Laptops", slug: "laptops", image: "/modern-laptop-workspace.png" },
     { name: "Tablets", slug: "tablets", image: "/modern-tablet-display.png" },
     { name: "Audio", slug: "audio", image: "/diverse-people-listening-headphones.png" },

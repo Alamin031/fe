@@ -24,7 +24,7 @@ import { cn } from "@/app/lib/utils"
 import Image from "next/image"
 
 const categories = [
-  { name: "Phones", slug: "phones" },
+  { name: "Smartphones", slug: "smartphones" },
   { name: "Laptops", slug: "laptops" },
   { name: "Tablets", slug: "tablets" },
   { name: "Accessories", slug: "accessories" },
