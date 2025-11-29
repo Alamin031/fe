@@ -21,6 +21,7 @@ import { MegaMenu } from "./mega-menu"
 import { SearchModal } from "./search-modal"
 import { useAuthStore } from "@/app/store/auth-store"
 import { cn } from "@/app/lib/utils"
+import Image from "next/image"
 
 const categories = [
   { name: "Smartphones", slug: "smartphones" },
@@ -60,25 +61,10 @@ export function Navbar() {
     <>
       {/* Top bar */}
       <div className="hidden border-b border-border bg-muted/50 lg:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 text-sm">
-          <div className="flex items-center gap-6 text-muted-foreground">
-            <a href="tel:+8801234567890" className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-              <Phone className="h-3.5 w-3.5" />
-              <span>+880 1234-567890</span>
-            </a>
-            <a href="/store-locator" className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-              <MapPin className="h-3.5 w-3.5" />
-              <span>Find a Store</span>
-            </a>
-          </div>
-          <div className="flex items-center gap-4 text-muted-foreground">
-            <Link href="/track-order" className="transition-colors hover:text-foreground">
-              Track Order
-            </Link>
-            <Link href="/support" className="transition-colors hover:text-foreground">
-              Support
-            </Link>
-          </div>
+        <div className="mx-auto max-w-7xl px-4 py-2 text-center">
+          <p className="text-sm font-medium">
+            Get Extra 5% Off On Prepaid Orders | Shop Now
+          </p>
         </div>
       </div>
 
@@ -91,11 +77,16 @@ export function Navbar() {
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-foreground">
-              <span className="text-lg font-bold text-background">F</span>
-            </div>
-            <span className="hidden text-xl font-semibold tracking-tight sm:inline-block">Friend&apos;s Telecom</span>
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/image/logo.png"
+              alt="Friend's Telecom"
+              width={140}
+              height={30}
+              className="rounded-lg object-contain"
+              priority
+            />
+            <span className="sr-only">Friend&apos;s Telecom</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -122,12 +113,6 @@ export function Navbar() {
                 {category.name}
               </Link>
             ))}
-            <Link
-              href="/deals"
-              className="rounded-md px-3 py-2 text-sm font-medium text-[oklch(0.55_0.2_25)] transition-colors hover:bg-accent"
-            >
-              Hot Deals
-            </Link>
           </nav>
 
           {/* Search - Desktop */}
