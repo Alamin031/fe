@@ -1,69 +1,84 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Heart, BarChart3, ShoppingCart, Eye } from "lucide-react"
-import { Button } from "../ui/button"
-import { Badge } from "../ui/badge"
-import { useCartStore } from "@/app/store/cart-store"
-import { useWishlistStore } from "@/app/store/wishlist-store"
-import { useCompareStore } from "@/app/store/compare-store"
-import { formatPrice, calculateDiscount, formatEMI } from "@/app/lib/utils/format"
-import { cn } from "@/app/lib/utils"
-import { Product } from "@/app/types"
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Heart, BarChart3, ShoppingCart, Eye } from "lucide-react";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { useCartStore } from "@/app/store/cart-store";
+import { useWishlistStore } from "@/app/store/wishlist-store";
+import { useCompareStore } from "@/app/store/compare-store";
+import {
+  formatPrice,
+  calculateDiscount,
+  formatEMI,
+} from "@/app/lib/utils/format";
+import { cn } from "@/app/lib/utils";
+import { Product } from "@/app/types";
 
 interface ProductCardProps {
-  product: Product
-  className?: string
+  product: Product;
+  className?: string;
 }
 
 export function ProductCard({ product, className }: ProductCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
-  const [imageLoaded, setImageLoaded] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  const addToCart = useCartStore((state) => state.addItem)
-  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore()
-  const { addItem: addToCompare, removeItem: removeFromCompare, isInCompare } = useCompareStore()
+  const addToCart = useCartStore((state) => state.addItem);
+  const {
+    addItem: addToWishlist,
+    removeItem: removeFromWishlist,
+    isInWishlist,
+  } = useWishlistStore();
+  const {
+    addItem: addToCompare,
+    removeItem: removeFromCompare,
+    isInCompare,
+  } = useCompareStore();
 
-  const inWishlist = isInWishlist(product.id)
-  const inCompare = isInCompare(product.id)
-  const hasDiscount = product.originalPrice && product.originalPrice > product.price
-  const discount = hasDiscount ? calculateDiscount(product.originalPrice!, product.price) : 0
-  const isOutOfStock = product.stock === 0
+  const inWishlist = isInWishlist(product.id);
+  const inCompare = isInCompare(product.id);
+  const hasDiscount =
+    product.originalPrice && product.originalPrice > product.price;
+  const discount = hasDiscount
+    ? calculateDiscount(product.originalPrice!, product.price)
+    : 0;
+  const isOutOfStock = product.stock === 0;
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (inWishlist) {
-      removeFromWishlist(product.id)
+      removeFromWishlist(product.id);
     } else {
-      addToWishlist(product)
+      addToWishlist(product);
     }
-  }
+  };
 
   const handleCompareToggle = (e: React.MouseEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (inCompare) {
-      removeFromCompare(product.id)
+      removeFromCompare(product.id);
     } else {
-      addToCompare(product)
+      addToCompare(product);
     }
-  }
+  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!isOutOfStock) {
-      addToCart(product, 1)
+      addToCart(product, 1);
     }
-  }
+  };
 
   return (
     <div
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:shadow-lg",
-        className,
+        className
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -72,28 +87,34 @@ export function ProductCard({ product, className }: ProductCardProps) {
       <div className="relative aspect-square overflow-hidden bg-muted">
         <Link href={`/product/${product.slug}`}>
           <Image
-            src={product.images[0] || "/placeholder.svg?height=400&width=400&query=product"}
+            src={
+              Array.isArray(product.images) && product.images[0]
+                ? product.images[0]
+                : "/placeholder.svg?height=400&width=400&query=product"
+            }
             alt={product.name}
             fill
             className={cn(
               "object-cover transition-all duration-500",
               isHovered && "scale-105",
-              !imageLoaded && "blur-sm",
+              !imageLoaded && "blur-sm"
             )}
             onLoad={() => setImageLoaded(true)}
           />
           {/* Second image on hover */}
-          {product.images[1] && (
-            <Image
-              src={product.images[1] || "/placeholder.svg"}
-              alt={product.name}
-              fill
-              className={cn(
-                "absolute inset-0 object-cover transition-opacity duration-500",
-                isHovered ? "opacity-100" : "opacity-0",
-              )}
-            />
-          )}
+          {Array.isArray(product.images) &&
+            product.images.length > 1 &&
+            product.images[1] && (
+              <Image
+                src={product.images[1] || "/placeholder.svg"}
+                alt={product.name}
+                fill
+                className={cn(
+                  "absolute inset-0 object-cover transition-opacity duration-500",
+                  isHovered ? "opacity-100" : "opacity-0"
+                )}
+              />
+            )}
         </Link>
 
         {/* Badges */}
@@ -103,9 +124,16 @@ export function ProductCard({ product, className }: ProductCardProps) {
               -{discount}%
             </Badge>
           )}
-          {product.isNew && <Badge className="bg-foreground text-background hover:bg-foreground">New</Badge>}
+          {product.isNew && (
+            <Badge className="bg-foreground text-background hover:bg-foreground">
+              New
+            </Badge>
+          )}
           {isOutOfStock && (
-            <Badge variant="secondary" className="bg-muted-foreground text-background">
+            <Badge
+              variant="secondary"
+              className="bg-muted-foreground text-background"
+            >
               Out of Stock
             </Badge>
           )}
@@ -115,7 +143,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         <div
           className={cn(
             "absolute right-3 top-3 flex flex-col gap-2 transition-all duration-300",
-            isHovered ? "translate-x-0 opacity-100" : "translate-x-2 opacity-0",
+            isHovered ? "translate-x-0 opacity-100" : "translate-x-2 opacity-0"
           )}
         >
           <Button
@@ -123,7 +151,8 @@ export function ProductCard({ product, className }: ProductCardProps) {
             size="icon"
             className={cn(
               "h-9 w-9 rounded-full shadow-md",
-              inWishlist && "bg-[oklch(0.55_0.2_25)] text-[oklch(1_0_0)] hover:bg-[oklch(0.55_0.2_25)]/90",
+              inWishlist &&
+                "bg-[oklch(0.55_0.2_25)] text-[oklch(1_0_0)] hover:bg-[oklch(0.55_0.2_25)]/90"
             )}
             onClick={handleWishlistToggle}
           >
@@ -134,14 +163,19 @@ export function ProductCard({ product, className }: ProductCardProps) {
             size="icon"
             className={cn(
               "h-9 w-9 rounded-full shadow-md",
-              inCompare && "bg-foreground text-background hover:bg-foreground/90",
+              inCompare &&
+                "bg-foreground text-background hover:bg-foreground/90"
             )}
             onClick={handleCompareToggle}
           >
             <BarChart3 className="h-4 w-4" />
           </Button>
           <Link href={`/product/${product.slug}`}>
-            <Button variant="secondary" size="icon" className="h-9 w-9 rounded-full shadow-md">
+            <Button
+              variant="secondary"
+              size="icon"
+              className="h-9 w-9 rounded-full shadow-md"
+            >
               <Eye className="h-4 w-4" />
             </Button>
           </Link>
@@ -151,10 +185,16 @@ export function ProductCard({ product, className }: ProductCardProps) {
         <div
           className={cn(
             "absolute bottom-0 left-0 right-0 p-3 transition-all duration-300",
-            isHovered ? "translate-y-0 opacity-100" : "translate-y-full opacity-0",
+            isHovered
+              ? "translate-y-0 opacity-100"
+              : "translate-y-full opacity-0"
           )}
         >
-          <Button className="w-full gap-2 shadow-md" disabled={isOutOfStock} onClick={handleAddToCart}>
+          <Button
+            className="w-full gap-2 shadow-md"
+            disabled={isOutOfStock}
+            onClick={handleAddToCart}
+          >
             <ShoppingCart className="h-4 w-4" />
             {isOutOfStock ? "Out of Stock" : "Add to Cart"}
           </Button>
@@ -164,12 +204,14 @@ export function ProductCard({ product, className }: ProductCardProps) {
       {/* Content */}
       <div className="flex flex-1 flex-col p-4">
         {/* Brand */}
-        <Link
-          href={`/brand/${product.brand.slug}`}
-          className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground"
-        >
-          {product.brand.name}
-        </Link>
+        {product.brand && product.brand.slug && product.brand.name && (
+          <Link
+            href={`/brand/${product.brand.slug}`}
+            className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground"
+          >
+            {product.brand.name}
+          </Link>
+        )}
 
         {/* Title */}
         <Link href={`/product/${product.slug}`}>
@@ -189,7 +231,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
                     "h-3.5 w-3.5",
                     i < Math.floor(product.rating)
                       ? "fill-[oklch(0.75_0.15_85)] text-[oklch(0.75_0.15_85)]"
-                      : "fill-muted text-muted",
+                      : "fill-muted text-muted"
                   )}
                   viewBox="0 0 20 20"
                 >
@@ -197,26 +239,36 @@ export function ProductCard({ product, className }: ProductCardProps) {
                 </svg>
               ))}
             </div>
-            <span className="text-xs text-muted-foreground">({product.reviewCount})</span>
+            <span className="text-xs text-muted-foreground">
+              ({product.reviewCount})
+            </span>
           </div>
         )}
 
         {/* Price */}
         <div className="mt-auto pt-3">
           <div className="flex items-baseline gap-2">
-            <span className="text-lg font-bold">{formatPrice(product.price)}</span>
+            <span className="text-lg font-bold">
+              {formatPrice(product.price)}
+            </span>
             {hasDiscount && (
-              <span className="text-sm text-muted-foreground line-through">{formatPrice(product.originalPrice!)}</span>
+              <span className="text-sm text-muted-foreground line-through">
+                {formatPrice(product.originalPrice!)}
+              </span>
             )}
           </div>
-          <p className="mt-0.5 text-xs text-muted-foreground">EMI: {formatEMI(product.price)}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            EMI: {formatEMI(product.price)}
+          </p>
         </div>
 
         {/* Stock Indicator */}
         {product.stock > 0 && product.stock <= 10 && (
-          <p className="mt-2 text-xs text-[oklch(0.55_0.2_25)]">Only {product.stock} left in stock</p>
+          <p className="mt-2 text-xs text-[oklch(0.55_0.2_25)]">
+            Only {product.stock} left in stock
+          </p>
         )}
       </div>
     </div>
-  )
+  );
 }

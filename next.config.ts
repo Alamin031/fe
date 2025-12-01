@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
-    domains: ["picsum.photos"],
+    domains: ["picsum.photos", "cdn.jsdelivr.net", "avatars.githubusercontent.com"],
   },
 };
 

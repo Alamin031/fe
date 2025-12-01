@@ -39,6 +39,7 @@ export interface Category {
   parentId?: string
   children?: Category[]
   productCount?: number
+  banner?: string
 }
 
 export interface Brand {
