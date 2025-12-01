@@ -40,6 +40,8 @@ export interface Category {
   children?: Category[]
   productCount?: number
   banner?: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface Brand {

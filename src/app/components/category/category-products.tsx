@@ -1,15 +1,20 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Grid3X3, List, ArrowUpDown } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
-import { Button } from "../ui/button"
-import { ProductCard } from "../product/product-card"
-import { Product } from "@/app/types"
-import { cn } from "@/app/lib/utils"
+import { useState } from "react";
+import { Grid3X3, List, ArrowUpDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { ProductCard } from "../product/product-card";
+import { Product } from "@/app/types";
+import { cn } from "@/app/lib/utils";
 
 interface CategoryProductsProps {
-  products: Product[]
+  products: Product[];
 }
 
 const sortOptions = [
@@ -17,38 +22,49 @@ const sortOptions = [
   { value: "price-low", label: "Price: Low to High" },
   { value: "price-high", label: "Price: High to Low" },
   { value: "popular", label: "Most Popular" },
-]
+];
 
 export function CategoryProducts({ products }: CategoryProductsProps) {
-  const [sortBy, setSortBy] = useState("newest")
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [currentPage, setCurrentPage] = useState(1)
-  const productsPerPage = 12
+  const [sortBy, setSortBy] = useState<string>(sortOptions[0].value);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  // Make products per page dynamic in the future if needed
+  const productsPerPage = 12;
 
-  // Sort products
+  // Dynamic sorting
   const sortedProducts = [...products].sort((a, b) => {
     switch (sortBy) {
       case "price-low":
-        return a.price - b.price
+        return (a.price ?? 0) - (b.price ?? 0);
       case "price-high":
-        return b.price - a.price
+        return (b.price ?? 0) - (a.price ?? 0);
       case "popular":
-        return b.reviewCount - a.reviewCount
+        return (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
       default:
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
     }
-  })
+  });
 
-  // Paginate
-  const totalPages = Math.ceil(sortedProducts.length / productsPerPage)
-  const paginatedProducts = sortedProducts.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage)
+  // Dynamic pagination
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sortedProducts.length / productsPerPage)
+  );
+  const paginatedProducts = sortedProducts.slice(
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage
+  );
 
   return (
     <div>
       {/* Toolbar */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground">
-          Showing {paginatedProducts.length} of {products.length} products
+          {sortedProducts.length > 0
+            ? `Showing ${paginatedProducts.length} of ${sortedProducts.length} products`
+            : "No products available"}
         </p>
 
         <div className="flex items-center gap-2">
@@ -77,13 +93,21 @@ export function CategoryProducts({ products }: CategoryProductsProps) {
           <div className="hidden items-center rounded-lg border border-border sm:flex">
             <button
               onClick={() => setViewMode("grid")}
-              className={cn("p-2 transition-colors", viewMode === "grid" ? "bg-muted" : "hover:bg-muted/50")}
+              className={cn(
+                "p-2 transition-colors",
+                viewMode === "grid" ? "bg-muted" : "hover:bg-muted/50"
+              )}
+              aria-label="Grid view"
             >
               <Grid3X3 className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={cn("p-2 transition-colors", viewMode === "list" ? "bg-muted" : "hover:bg-muted/50")}
+              className={cn(
+                "p-2 transition-colors",
+                viewMode === "list" ? "bg-muted" : "hover:bg-muted/50"
+              )}
+              aria-label="List view"
             >
               <List className="h-4 w-4" />
             </button>
@@ -93,7 +117,12 @@ export function CategoryProducts({ products }: CategoryProductsProps) {
 
       {/* Products Grid */}
       <div
-        className={cn("grid gap-4", viewMode === "grid" ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-4" : "grid-cols-1")}
+        className={cn(
+          "grid gap-4",
+          viewMode === "grid"
+            ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+            : "grid-cols-1"
+        )}
       >
         {paginatedProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
@@ -101,10 +130,12 @@ export function CategoryProducts({ products }: CategoryProductsProps) {
       </div>
 
       {/* Empty State */}
-      {paginatedProducts.length === 0 && (
+      {sortedProducts.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <p className="text-lg font-medium">No products found</p>
-          <p className="mt-1 text-muted-foreground">Try adjusting your filters or search criteria</p>
+          <p className="mt-1 text-muted-foreground">
+            Try adjusting your filters, search, or check back later.
+          </p>
         </div>
       )}
 
@@ -141,5 +172,5 @@ export function CategoryProducts({ products }: CategoryProductsProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,4 +1,34 @@
-import {apiClient} from '../client';
+// Helper to normalize API category objects to the app's Category type
+interface ApiCategory {
+  id?: string | number;
+  name?: string;
+  slug?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  image?: string;
+  parentId?: string;
+  productCount?: number;
+  banner?: string;
+  children?: ApiCategory[];
+}
+
+function normalizeCategory(raw: ApiCategory): Category {
+  return {
+    id: String(raw.id),
+    name: String(raw.name),
+    slug: String(raw.slug),
+    createdAt: String(raw.createdAt),
+    updatedAt: String(raw.updatedAt),
+    ...(raw.image && { image: raw.image }),
+    ...(raw.parentId && { parentId: raw.parentId }),
+    ...(raw.productCount && { productCount: raw.productCount }),
+    ...(raw.banner && { banner: raw.banner }),
+    ...(raw.children && Array.isArray(raw.children)
+      ? { children: raw.children.map(normalizeCategory) }
+      : {}),
+  };
+}
+import { apiClient } from '../client';
 import {
   Category,
   CreateCategoryRequest,
@@ -7,7 +37,7 @@ import {
   ProductFilters,
   Subcategory,
 } from '../types';
-import {API_ENDPOINTS} from '../config';
+import { API_ENDPOINTS } from '../config';
 
 type CreateCategoryWithFile = Omit<CreateCategoryRequest, 'banner'> & {
   banner?: File | string;
@@ -43,7 +73,7 @@ export const categoriesService = {
       API_ENDPOINTS.CATEGORIES_CREATE,
       formData,
       {
-        headers: {'Content-Type': 'multipart/form-data'},
+        headers: { 'Content-Type': 'multipart/form-data' },
       },
     );
 
@@ -57,7 +87,8 @@ export const categoriesService = {
     const response = await apiClient.get<Category[]>(
       API_ENDPOINTS.CATEGORIES_GET,
     );
-    return response.data;
+    const data = response.data;
+    return Array.isArray(data) ? data.map(normalizeCategory) : [];
   },
 
   /**
@@ -67,7 +98,8 @@ export const categoriesService = {
     const response = await apiClient.get<Category[]>(
       API_ENDPOINTS.CATEGORIES_FEATURED,
     );
-    return response.data;
+    const data = response.data;
+    return Array.isArray(data) ? data.map(normalizeCategory) : [];
   },
 
   /**
@@ -76,7 +108,7 @@ export const categoriesService = {
   getBySlug: async (slug: string): Promise<Category> => {
     const endpoint = API_ENDPOINTS.CATEGORIES_SLUG.replace('{slug}', slug);
     const response = await apiClient.get<Category>(endpoint);
-    return response.data;
+    return normalizeCategory(response.data);
   },
 
   /**
@@ -122,7 +154,7 @@ export const categoriesService = {
     const endpoint = API_ENDPOINTS.CATEGORIES_UPDATE.replace('{id}', id);
 
     const response = await apiClient.patch<Category>(endpoint, formData, {
-      headers: {'Content-Type': 'multipart/form-data'},
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
 
     return response.data;
@@ -141,7 +173,7 @@ export const categoriesService = {
    */
   createSubcategory: async (
     categoryId: string,
-    data: {name: string; categoryId?: string},
+    data: { name: string; categoryId?: string },
   ): Promise<Subcategory> => {
     const endpoint = API_ENDPOINTS.SUBCATEGORIES_CREATE.replace(
       '{categoryId}',
@@ -168,7 +200,7 @@ export const categoriesService = {
    */
   updateSubcategory: async (
     id: string,
-    data: {name?: string; categoryId?: string},
+    data: { name?: string; categoryId?: string },
   ): Promise<Subcategory> => {
     const endpoint = API_ENDPOINTS.SUBCATEGORIES_UPDATE.replace('{id}', id);
     const response = await apiClient.patch<Subcategory>(endpoint, data);
