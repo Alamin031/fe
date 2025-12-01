@@ -37,7 +37,29 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const product = getProductBySlug(slug)
 
   if (!product) {
-    notFound()
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
+        <h1 className="mb-2 text-9xl font-bold text-muted-foreground/20">404</h1>
+        <h2 className="mb-4 text-2xl font-bold">Product Not Found</h2>
+        <p className="mb-8 max-w-md text-muted-foreground">
+          Sorry, the product you&apos;re looking for doesn&apos;t exist or has been removed.
+        </p>
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link href="/">
+            <Button className="gap-2">
+              <Home className="h-4 w-4" />
+              Go Home
+            </Button>
+          </Link>
+          <Link href="/category/smartphones">
+            <Button variant="outline" className="gap-2 bg-transparent">
+              <ArrowLeft className="h-4 w-4" />
+              Browse Products
+            </Button>
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   const relatedProducts = getRelatedProducts(product, 5)
