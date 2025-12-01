@@ -33,16 +33,6 @@ import {
   SelectValue,
 } from "../../components/ui/select";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../../components/ui/dialog";
-import { Label } from "../../components/ui/label";
-import { Textarea } from "../../components/ui/textarea";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -53,6 +43,8 @@ import {
   AlertDialogTitle,
 } from "../../components/ui/alert-dialog";
 import { formatPrice } from "../../lib/utils/format";
+import { EditProductModal } from "../../components/admin/edit-product-modal";
+import { ViewProductModal } from "../../components/admin/view-product-modal";
 
 import productsService from "../../lib/api/services/products";
 import categoriesService from "../../lib/api/services/categories";
