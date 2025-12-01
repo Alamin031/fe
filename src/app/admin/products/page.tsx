@@ -63,13 +63,10 @@ function AdminProductsPage() {
     description?: string;
   };
   const [products, setProducts] = useState<UIProduct[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<UIProduct | null>(
-    null
-  );
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [viewOpen, setViewOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [editFormData, setEditFormData] = useState<UIProduct | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>(
     []
