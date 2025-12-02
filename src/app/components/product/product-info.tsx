@@ -22,6 +22,7 @@ interface ProductInfoProps {
 }
 
 export function ProductInfo({ product }: ProductInfoProps) {
+  const router = useRouter()
   const [quantity, setQuantity] = useState(1)
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
   const [carePlusSelected, setCarePlusSelected] = useState(false)
