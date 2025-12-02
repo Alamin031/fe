@@ -74,16 +74,16 @@ export default async function Page({ searchParams }: AllProductsPageProps) {
   }
 
   // Extract search params
-  const selectedCategories = Array.isArray(searchParams.categories)
-    ? searchParams.categories
-    : searchParams.categories
-    ? [searchParams.categories]
+  const selectedCategories = Array.isArray(params.categories)
+    ? params.categories
+    : params.categories
+    ? [params.categories]
     : [];
 
-  const selectedBrands = Array.isArray(searchParams.brands)
-    ? searchParams.brands
-    : searchParams.brands
-    ? [searchParams.brands]
+  const selectedBrands = Array.isArray(params.brands)
+    ? params.brands
+    : params.brands
+    ? [params.brands]
     : [];
 
   // Fetch products with filters
