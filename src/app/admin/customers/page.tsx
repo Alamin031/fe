@@ -613,7 +613,7 @@ export default function AdminCustomersPage() {
       </AlertDialog>
 
       {/* Delete Customer Modal */}
-      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+      <AlertDialog open={deleteOpen} onOpenChange={handleCloseDelete}>
         <AlertDialogContent className="alert-animate border-0 bg-white shadow-2xl">
           <AlertDialogHeader className="space-y-2">
             <AlertDialogTitle className="text-xl font-bold text-slate-900">Delete Customer</AlertDialogTitle>
