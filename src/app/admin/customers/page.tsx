@@ -424,10 +424,10 @@ export default function AdminCustomersPage() {
 
       {/* Edit Customer Modal */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent className="modal-animate max-w-2xl border-0 bg-gradient-to-br from-slate-50 to-slate-100 shadow-2xl dark:from-slate-900 dark:to-slate-800">
+        <DialogContent className="modal-animate max-w-2xl border-0 bg-white shadow-2xl">
           <DialogHeader className="space-y-1">
-            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent dark:from-slate-50 dark:to-slate-300">Edit Customer</DialogTitle>
-            <DialogDescription className="text-slate-600 dark:text-slate-400">Update customer information</DialogDescription>
+            <DialogTitle className="text-2xl font-bold text-slate-900">Edit Customer</DialogTitle>
+            <DialogDescription className="text-slate-600">Update customer information</DialogDescription>
           </DialogHeader>
           {editFormData && (
             <div className="space-y-5 max-h-[60vh] overflow-y-auto pr-4">
