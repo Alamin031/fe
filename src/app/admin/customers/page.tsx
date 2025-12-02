@@ -367,7 +367,7 @@ export default function AdminCustomersPage() {
       </Card>
 
       {/* View Profile Modal */}
-      <Dialog open={viewOpen} onOpenChange={setViewOpen}>
+      <Dialog open={viewOpen} onOpenChange={handleCloseView}>
         <DialogContent className="modal-animate max-w-2xl border-0 bg-white shadow-2xl">
           <DialogHeader className="space-y-1">
             <DialogTitle className="text-2xl font-bold text-slate-900">Customer Profile</DialogTitle>
