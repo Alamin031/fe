@@ -338,13 +338,24 @@ export function Navbar() {
                   <div className="border-t border-border p-4">
                     {isAuthenticated ? (
                       <div className="space-y-2">
-                        <SheetClose asChild>
-                          <Link href="/account">
-                            <Button variant="outline" className="w-full bg-transparent">
-                              Dashboard
-                            </Button>
-                          </Link>
-                        </SheetClose>
+                        {user?.role !== "admin" && (
+                          <SheetClose asChild>
+                            <Link href="/account">
+                              <Button variant="outline" className="w-full bg-transparent">
+                                Dashboard
+                              </Button>
+                            </Link>
+                          </SheetClose>
+                        )}
+                        {user?.role === "admin" && (
+                          <SheetClose asChild>
+                            <Link href="/admin">
+                              <Button variant="outline" className="w-full bg-transparent">
+                                Admin Panel
+                              </Button>
+                            </Link>
+                          </SheetClose>
+                        )}
                         <button
                           onClick={handleLogout}
                           className="w-full"
