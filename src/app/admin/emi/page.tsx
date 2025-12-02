@@ -421,3 +421,9 @@ function AdminEMIPage() {
     </div>
   );
 }
+
+export default withProtectedRoute(AdminEMIPage, {
+  requiredRoles: ["admin"],
+  fallbackTo: "/login",
+  showLoader: true,
+});
