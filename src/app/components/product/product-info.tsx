@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Heart, BarChart3, ShoppingCart, Share2, Shield, Truck, RotateCcw, Check, AlertCircle } from "lucide-react"
 import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
@@ -21,6 +22,7 @@ interface ProductInfoProps {
 }
 
 export function ProductInfo({ product }: ProductInfoProps) {
+  const router = useRouter()
   const [quantity, setQuantity] = useState(1)
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
   const [carePlusSelected, setCarePlusSelected] = useState(false)
@@ -72,8 +74,26 @@ export function ProductInfo({ product }: ProductInfoProps) {
     }
   }
 
+  const handleAddToCompareAndNavigate = () => {
+    addToCompare(product)
+    router.push("/compare")
+  }
+
   return (
     <div className="flex flex-col">
+      {/* Add to Compare Button */}
+      <div className="mb-4 flex justify-end">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2 text-muted-foreground hover:text-foreground"
+          onClick={handleAddToCompareAndNavigate}
+        >
+          <BarChart3 className="h-4 w-4" />
+          Add to Compare
+        </Button>
+      </div>
+
       {/* Brand */}
       {product.brand && (
         <Link
