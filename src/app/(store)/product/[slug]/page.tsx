@@ -47,7 +47,7 @@ export default async function ProductPage({params}: ProductPageProps) {
   const {slug} = await params;
   const apiProduct = await productsService.getBySlug(slug);
 
-  let category = apiProduct.category;
+  const category = apiProduct.category;
 
   // Allow page to render even without category data - fallback values will be used
   if (!apiProduct || !apiProduct.slug || !apiProduct.name) {

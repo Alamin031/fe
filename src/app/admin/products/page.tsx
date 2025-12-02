@@ -1,8 +1,12 @@
-"use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import {EditProductModal} from '../../components/admin/edit-product-modal';
+import {ViewProductModal} from '../../components/admin/view-product-modal';
+
+import {useState, useEffect} from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import {
   Plus,
   Search,
@@ -12,26 +16,26 @@ import {
   Trash2,
   Eye,
   Copy,
-} from "lucide-react";
-import { withProtectedRoute } from "../../lib/auth/protected-route";
-import { Card, CardContent } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
-import { Checkbox } from "../../components/ui/checkbox";
+} from 'lucide-react';
+import {withProtectedRoute} from '../../lib/auth/protected-route';
+import {Card, CardContent} from '../../components/ui/card';
+import {Button} from '../../components/ui/button';
+import {Input} from '../../components/ui/input';
+import {Badge} from '../../components/ui/badge';
+import {Checkbox} from '../../components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
+} from '../../components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
+} from '../../components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,44 +45,43 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../../components/ui/alert-dialog";
-import { formatPrice } from "../../lib/utils/format";
-import { EditProductModal } from "../../components/admin/edit-product-modal";
-import { ViewProductModal } from "../../components/admin/view-product-modal";
+} from '../../components/ui/alert-dialog';
+import {formatPrice} from '../../lib/utils/format';
 
-import productsService from "../../lib/api/services/products";
-import categoriesService from "../../lib/api/services/categories";
+import productsService from '../../lib/api/services/products';
+import categoriesService from '../../lib/api/services/categories';
+
+// UI Product type for display
+type UIProduct = {
+  id: string;
+  name: string;
+  image: string;
+  sku: string;
+  category: string;
+  price: number;
+  stock: number;
+  status: string;
+  description?: string;
+};
 
 function AdminProductsPage() {
-  // UI Product type for display
-  type UIProduct = {
-    id: string;
-    name: string;
-    image: string;
-    sku: string;
-    category: string;
-    price: number;
-    stock: number;
-    status: string;
-    description?: string;
-  };
   const [products, setProducts] = useState<UIProduct[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [viewOpen, setViewOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
-    []
+  const [loading, setLoading] = useState<boolean>(false);
+  const [categories, setCategories] = useState<{id: string; name: string}[]>(
+    [],
   );
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Fetch categories on mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const cats = await categoriesService.getAll();
-        setCategories(cats.map((c) => ({ id: c.id, name: c.name })));
+        setCategories(cats.map((c: any) => ({id: c.id, name: c.name})));
       } catch {
         setCategories([]);
       }
@@ -92,33 +95,64 @@ function AdminProductsPage() {
       setLoading(true);
       try {
         let res;
-        if (selectedCategory && selectedCategory !== "all") {
-          res = await productsService.getAll({ categoryId: selectedCategory });
+        if (selectedCategory && selectedCategory !== 'all') {
+          res = await productsService.getAll({categoryId: selectedCategory});
         } else {
           res = await productsService.getAll();
         }
-        // ProductListResponse: { data: Product[], ... }
         const apiProducts = Array.isArray(res) ? res : [];
-        const mapped: UIProduct[] = apiProducts.map((p) => {
-          const categoryObj = categories.find((c) => c.id === p.categoryId);
+        // Find missing category IDs
+        const missingCategoryIds = [
+          ...new Set(
+            apiProducts
+              .map((p: any) => p.categoryId)
+              .filter(
+                (id: string) => id && !categories.some((c: any) => c.id === id),
+              ),
+          ),
+        ];
+        // Fetch missing categories
+        if (missingCategoryIds.length > 0) {
+          const fetched = await Promise.all(
+            missingCategoryIds.map(id => categoriesService.getById(id)),
+          );
+          setCategories(prev => [
+            ...prev,
+            ...fetched
+              .filter(Boolean)
+              .map((c: any) => ({id: c.id, name: c.name})),
+          ]);
+        }
+        const mapped: UIProduct[] = apiProducts.map((p: any) => {
+          const categoryObj = categories.find(c => c.id === p.categoryId);
+          let stockNum = 0;
+          if (typeof p.stock === 'number') stockNum = p.stock;
+          else if (typeof p.stock === 'string')
+            stockNum = parseInt(p.stock) || 0;
+          const priceNum =
+            p.price !== null && p.price !== undefined
+              ? Number(p.price)
+              : p.basePrice !== null && p.basePrice !== undefined
+              ? Number(p.basePrice)
+              : 0;
           return {
             id: p.id,
             name: p.name,
             image:
-              (Array.isArray(p.images) && p.images.length > 0 && p.images[0]) ||
+              (Array.isArray(p.image) && p.image.length > 0 && p.image[0]) ||
               p.thumbnail ||
-              "/placeholder.svg",
-            sku: p.sku || "",
-            category: categoryObj ? categoryObj.name : "Uncategorized",
-            price: Number(p.price) || Number(p.basePrice) || 0,
-            stock: Number(p.stock) || 0,
+              '/placeholder.svg',
+            sku: p.sku || '',
+            category: categoryObj ? categoryObj.name : 'Uncategorized',
+            price: priceNum,
+            stock: stockNum,
             status:
-              typeof p.status === "string"
+              typeof p.status === 'string'
                 ? p.status
-                : !p.stock || p.stock === 0
-                ? "Out of Stock"
-                : "Active",
-            description: p.description || "",
+                : !stockNum || stockNum === 0
+                ? 'Out of Stock'
+                : 'Active',
+            description: p.description || '',
           };
         });
         setProducts(mapped);
@@ -131,15 +165,9 @@ function AdminProductsPage() {
     fetchProducts();
   }, [selectedCategory, categories]);
 
-  const handleViewClick = async (product: UIProduct) => {
-    try {
-      const fullProduct = await productsService.getById(product.id);
-      setSelectedProduct(fullProduct);
-      setViewOpen(true);
-    } catch {
-      setSelectedProduct(product);
-      setViewOpen(true);
-    }
+  const handleViewClick = (product: UIProduct) => {
+    setSelectedProduct(product);
+    setViewOpen(true);
   };
 
   const handleEditClick = (product: UIProduct) => {
@@ -154,7 +182,7 @@ function AdminProductsPage() {
 
   const handleConfirmDelete = () => {
     if (selectedProduct) {
-      setProducts(products.filter((p) => p.id !== selectedProduct.id));
+      setProducts(products.filter(p => p.id !== selectedProduct.id));
       setDeleteOpen(false);
       setSelectedProduct(null);
     }
@@ -187,14 +215,13 @@ function AdminProductsPage() {
               </div>
               <Select
                 value={selectedCategory}
-                onValueChange={setSelectedCategory}
-              >
+                onValueChange={setSelectedCategory}>
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((cat) => (
+                  {categories.map(cat => (
                     <SelectItem key={cat.id} value={cat.id}>
                       {cat.name}
                     </SelectItem>
@@ -216,8 +243,7 @@ function AdminProductsPage() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 bg-transparent"
-            >
+              className="gap-2 bg-transparent">
               <Filter className="h-4 w-4" />
               More Filters
             </Button>
@@ -244,8 +270,7 @@ function AdminProductsPage() {
                   <tr>
                     <td
                       colSpan={8}
-                      className="py-8 text-center text-muted-foreground"
-                    >
+                      className="py-8 text-center text-muted-foreground">
                       Loading products...
                     </td>
                   </tr>
@@ -253,13 +278,12 @@ function AdminProductsPage() {
                   <tr>
                     <td
                       colSpan={8}
-                      className="py-8 text-center text-muted-foreground"
-                    >
+                      className="py-8 text-center text-muted-foreground">
                       No products found.
                     </td>
                   </tr>
                 ) : (
-                  products.map((product) => (
+                  products.map(product => (
                     <tr key={product.id} className="border-b border-border">
                       <td className="py-4 pr-4">
                         <Checkbox />
@@ -268,7 +292,7 @@ function AdminProductsPage() {
                         <div className="flex items-center gap-3">
                           <div className="h-12 w-12 overflow-hidden rounded-lg bg-muted">
                             <Image
-                              src={product.image || "/placeholder.svg"}
+                              src={product.image || '/placeholder.svg'}
                               alt={product.name}
                               width={48}
                               height={48}
@@ -290,15 +314,14 @@ function AdminProductsPage() {
                         <Badge
                           variant="secondary"
                           className={
-                            product.status === "Active"
-                              ? "bg-green-500/10 text-green-600"
-                              : product.status === "Low Stock"
-                              ? "bg-yellow-500/10 text-yellow-600"
-                              : product.status === "Out of Stock"
-                              ? "bg-red-500/10 text-red-600"
-                              : "bg-gray-500/10 text-gray-600"
-                          }
-                        >
+                            product.status === 'Active'
+                              ? 'bg-green-500/10 text-green-600'
+                              : product.status === 'Low Stock'
+                              ? 'bg-yellow-500/10 text-yellow-600'
+                              : product.status === 'Out of Stock'
+                              ? 'bg-red-500/10 text-red-600'
+                              : 'bg-gray-500/10 text-gray-600'
+                          }>
                           {product.status}
                         </Badge>
                       </td>
@@ -311,14 +334,12 @@ function AdminProductsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
-                              onClick={() => handleViewClick(product)}
-                            >
+                              onClick={() => handleViewClick(product)}>
                               <Eye className="mr-2 h-4 w-4" />
                               View
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              onClick={() => handleEditClick(product)}
-                            >
+                              onClick={() => handleEditClick(product)}>
                               <Edit className="mr-2 h-4 w-4" />
                               Edit
                             </DropdownMenuItem>
@@ -328,8 +349,7 @@ function AdminProductsPage() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => handleDeleteClick(product)}
-                            >
+                              onClick={() => handleDeleteClick(product)}>
                               <Trash2 className="mr-2 h-4 w-4" />
                               Delete
                             </DropdownMenuItem>
@@ -371,11 +391,11 @@ function AdminProductsPage() {
         open={editOpen}
         onOpenChange={setEditOpen}
         product={selectedProduct}
-        onSuccess={(updatedProduct) => {
+        onSuccess={updatedProduct => {
           setProducts(
-            products.map((p) =>
-              p.id === updatedProduct.id ? { ...p, ...updatedProduct } : p
-            )
+            products.map(p =>
+              p.id === updatedProduct.id ? {...p, ...updatedProduct} : p,
+            ),
           );
         }}
       />
@@ -386,7 +406,7 @@ function AdminProductsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Product</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete{" "}
+              Are you sure you want to delete{' '}
               <span className="font-semibold">{selectedProduct?.name}</span>?
               This action cannot be undone.
             </AlertDialogDescription>
@@ -395,8 +415,7 @@ function AdminProductsPage() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -405,9 +424,10 @@ function AdminProductsPage() {
     </div>
   );
 }
+// End of AdminProductsPage function
 
 export default withProtectedRoute(AdminProductsPage, {
-  requiredRoles: ["admin"],
-  fallbackTo: "/login",
+  requiredRoles: ['admin'],
+  fallbackTo: '/login',
   showLoader: true,
 });

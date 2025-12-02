@@ -24,7 +24,7 @@ function normalizeCategory(raw: ApiCategory): Category {
     ...(raw.parentId && { parentId: raw.parentId }),
     ...(raw.productCount && { productCount: raw.productCount }),
     ...(raw.banner && { banner: raw.banner }),
-    ...(raw.priority !== undefined && { priority: raw.priority }),
+    ...(raw.priority !== undefined && { priority: Number(raw.priority) }),
     ...(raw.children && Array.isArray(raw.children)
       ? { children: raw.children.map(normalizeCategory) }
       : {}),
@@ -208,6 +208,13 @@ export const categoriesService = {
     const endpoint = API_ENDPOINTS.SUBCATEGORIES_UPDATE.replace('{id}', id);
     const response = await apiClient.patch<Subcategory>(endpoint, data);
     return response.data;
+  },
+
+  // getById
+  getById: async (id: string): Promise<Category> => {
+    const endpoint = API_ENDPOINTS.CATEGORIES_GET_ONE.replace('{id}', id);
+    const response = await apiClient.get<Category>(endpoint);
+    return normalizeCategory(response.data);
   },
 
   /**

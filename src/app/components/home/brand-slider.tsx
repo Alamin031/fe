@@ -69,7 +69,7 @@ export function BrandSlider({ brands }: BrandSliderProps) {
               href={`/brand/${brand.slug}`}
               aria-label={`Shop ${brand.name}`}
               className="group relative flex shrink-0 items-center justify-center rounded-xl border border-border bg-card p-3 transition-transform duration-200 hover:scale-105 hover:shadow-lg"
-              style={{ width: "640px", height: "200px" }}
+              style={{ width: "200px", height: "72px" }}
             >
               <div className="flex h-full w-full items-center justify-center">
                 <div
@@ -94,7 +94,7 @@ export function BrandSlider({ brands }: BrandSliderProps) {
               href={`/brand/${brand.slug}`}
               aria-label={`Shop ${brand.name}`}
               className="group relative flex shrink-0 items-center justify-center rounded-xl border border-border bg-card p-3 transition-transform duration-200 hover:scale-105 hover:shadow-lg"
-              style={{ width: "640px", height: "200px" }}
+              style={{ width: "200px", height: "72px" }}
             >
               <div className="flex h-full w-full items-center justify-center">
                 <div

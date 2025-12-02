@@ -92,9 +92,6 @@ export function HeroBanner() {
               priority={index === 0}
               className="object-cover"
             />
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-linear-to-r from-background/90 via-background/50 to-transparent" />
-
             {/* Content (optional, only if you have title/subtitle/cta in API) */}
             <div className="absolute inset-0 flex items-center">
               <div className="mx-auto w-full max-w-7xl px-6 md:px-12">

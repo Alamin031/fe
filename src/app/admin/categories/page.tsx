@@ -174,6 +174,15 @@ function AdminCategoriesPage() {
 
   // ===== SUBCATEGORY =====
 
+  // Sort categories by priority (ascending)
+  const sortedCategories = Array.isArray(categories)
+    ? [...categories].sort((a, b) => {
+        const pa = typeof a.priority === 'number' ? a.priority : Infinity;
+        const pb = typeof b.priority === 'number' ? b.priority : Infinity;
+        return pa - pb;
+      })
+    : [];
+
   return (
     <div className="space-y-6 p-2 sm:p-4">
       {/* ===== HEADER ===== */}
@@ -294,7 +303,7 @@ function AdminCategoriesPage() {
             </tr>
           </thead>
           <tbody>
-            {(Array.isArray(categories) ? categories : []).map((cat) => (
+            {sortedCategories.map((cat) => (
               <tr key={cat.id} className="border-b hover:bg-gray-50">
                 <td className="px-3 py-2 whitespace-nowrap">{cat.name}</td>
                 <td className="px-3 py-2 whitespace-nowrap">{cat.slug}</td>
@@ -372,9 +381,63 @@ function AdminCategoriesPage() {
         </table>
       </div>
 
+      {/* ===== VIEW MODAL ===== */}
+      <Dialog open={viewOpen} onOpenChange={setViewOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>View Category</DialogTitle>
+          </DialogHeader>
+          {selectedCategory && (
+            <div className="space-y-4 py-2">
+              <div>
+                <Label>Name</Label>
+                <div className="mt-1 text-base font-medium">{selectedCategory.name}</div>
+              </div>
+              <div>
+                <Label>Slug</Label>
+                <div className="mt-1 text-base">{selectedCategory.slug}</div>
+              </div>
+              <div>
+                <Label>Description</Label>
+                <div className="mt-1 text-base">{selectedCategory.description || '-'}</div>
+              </div>
+              <div>
+                <Label>Banner</Label>
+                <div className="mt-1">
+                  <img
+                    src={
+                      typeof selectedCategory.banner === 'string' && selectedCategory.banner
+                        ? selectedCategory.banner
+                        : '/placeholder.svg'
+                    }
+                    alt={selectedCategory.name}
+                    className="h-16 w-32 object-contain rounded border bg-gray-100"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label>Priority</Label>
+                <div className="mt-1 text-base">{selectedCategory.priority ?? '-'}</div>
+              </div>
+              <div>
+                <Label>Created</Label>
+                <div className="mt-1 text-base">{selectedCategory.createdAt ? new Date(selectedCategory.createdAt).toLocaleString() : '-'}</div>
+              </div>
+              <div>
+                <Label>Updated</Label>
+                <div className="mt-1 text-base">{selectedCategory.updatedAt ? new Date(selectedCategory.updatedAt).toLocaleString() : '-'}</div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* ===== EDIT MODAL ===== */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Category</DialogTitle>
+          </DialogHeader>
           {editFormData && (
             <form
               onSubmit={async (e) => {
