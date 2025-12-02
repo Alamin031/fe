@@ -165,8 +165,7 @@ export default function AdminCustomersPage() {
   const handleConfirmDelete = () => {
     if (selectedCustomer) {
       setCustomers(customers.filter((c) => c.id !== selectedCustomer.id))
-      setDeleteOpen(false)
-      setSelectedCustomer(null)
+      handleCloseDelete(false)
     }
   }
 
