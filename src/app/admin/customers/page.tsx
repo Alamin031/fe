@@ -460,7 +460,7 @@ export default function AdminCustomersPage() {
       </Dialog>
 
       {/* Edit Customer Modal */}
-      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+      <Dialog open={editOpen} onOpenChange={handleCloseEdit}>
         <DialogContent className="modal-animate max-w-2xl border-0 bg-white shadow-2xl">
           <DialogHeader className="space-y-1">
             <DialogTitle className="text-2xl font-bold text-slate-900">Edit Customer</DialogTitle>
