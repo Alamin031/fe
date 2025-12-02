@@ -550,7 +550,11 @@ export function ViewProductModal({
                     <label className="text-xs font-semibold text-muted-foreground uppercase">
                       Meta Keywords
                     </label>
-                    <p className="mt-1 text-sm">{product.metaKeywords}</p>
+                    <p className="mt-1 text-sm">
+                      {Array.isArray(product.metaKeywords)
+                        ? product.metaKeywords.join(", ")
+                        : String(product.metaKeywords)}
+                    </p>
                   </div>
                 )}
 
