@@ -114,7 +114,7 @@ export function MegaMenu({ isOpen, onClose, categories, brands }: MegaMenuProps)
               )}
             </div>
             <Link
-              href="/brands"
+              href="/all-products"
               onClick={onClose}
               className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground"
             >
