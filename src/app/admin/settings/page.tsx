@@ -9,8 +9,9 @@ import { Switch } from "../../components/ui/switch"
 import { Separator } from "../../components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
+import { withProtectedRoute } from "../../lib/auth/protected-route"
 
-export default function AdminSettingsPage() {
+function AdminSettingsPage() {
   return (
     <div className="space-y-6">
       <div>
@@ -235,3 +236,9 @@ export default function AdminSettingsPage() {
     </div>
   )
 }
+
+export default withProtectedRoute(AdminSettingsPage, {
+  requiredRoles: ["admin"],
+  fallbackTo: "/login",
+  showLoader: true,
+});

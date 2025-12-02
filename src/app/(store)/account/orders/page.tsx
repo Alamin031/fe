@@ -17,6 +17,7 @@ import { WriteReviewModal } from "../../../components/order/write-review-modal"
 import { OrderTrackingTimeline } from "../../../components/order/order-tracking-timeline"
 import { ReviewCard } from "../../../components/order/review-card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../../components/ui/dialog"
+import { withProtectedRoute } from "../../../lib/auth/protected-route"
 
 const ordersData = [
   {
@@ -318,7 +319,7 @@ function OrderCard({ order }: { order: OrderWithStatus }) {
   )
 }
 
-export default function OrdersPage() {
+function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredOrders = ordersData.filter((order) =>
@@ -422,3 +423,7 @@ export default function OrdersPage() {
     </div>
   )
 }
+
+export default withProtectedRoute(OrdersPage, {
+  requiredRoles: ["user"],
+})

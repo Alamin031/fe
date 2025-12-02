@@ -30,6 +30,7 @@ import { careService, type ProductCarePlan } from '../../lib/api/services/care';
 import { productsService } from '../../lib/api/services/products';
 import { categoriesService } from '../../lib/api/services/categories';
 import type { Product, Category } from '../../lib/api/types';
+import { withProtectedRoute } from '../../lib/auth/protected-route';
 
 // Custom MultiSelect Component
 interface MultiSelectProps {
@@ -161,7 +162,7 @@ function MultiSelect({
   );
 }
 
-export default function ProductCarePlanPage() {
+function ProductCarePlanPage() {
   const [carePlans, setCarePlans] = useState<ProductCarePlan[]>([]);
   const [filteredPlans, setFilteredPlans] = useState<ProductCarePlan[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -655,3 +656,9 @@ export default function ProductCarePlanPage() {
     </div>
   );
 }
+
+export default withProtectedRoute(ProductCarePlanPage, {
+  requiredRoles: ["admin"],
+  fallbackTo: "/login",
+  showLoader: true,
+});
