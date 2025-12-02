@@ -194,3 +194,7 @@ function NotificationsPage() {
     </div>
   )
 }
+
+export default withProtectedRoute(NotificationsPage, {
+  requiredRoles: ["user"],
+})
