@@ -127,3 +127,7 @@ function WalletPage() {
     </div>
   )
 }
+
+export default withProtectedRoute(WalletPage, {
+  requiredRoles: ["user"],
+})
