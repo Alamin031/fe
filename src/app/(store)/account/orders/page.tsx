@@ -319,7 +319,7 @@ function OrderCard({ order }: { order: OrderWithStatus }) {
   )
 }
 
-export default function OrdersPage() {
+function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredOrders = ordersData.filter((order) =>
@@ -423,3 +423,7 @@ export default function OrdersPage() {
     </div>
   )
 }
+
+export default withProtectedRoute(OrdersPage, {
+  requiredRoles: ["user"],
+})
