@@ -527,7 +527,7 @@ export default function AdminCustomersPage() {
             </div>
           )}
           <DialogFooter className="mt-6 flex gap-3">
-            <Button variant="outline" onClick={() => setEditOpen(false)} className="border-slate-200">
+            <Button variant="outline" onClick={() => handleCloseEdit(false)} className="border-slate-200">
               Cancel
             </Button>
             <Button onClick={handleSaveEdit} className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">Save Changes</Button>
