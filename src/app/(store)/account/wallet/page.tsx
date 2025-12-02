@@ -2,6 +2,7 @@ import { CreditCard, Gift, Plus, Clock } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
 import { Button } from "../../../components/ui/button"
 import { formatPrice } from "../../../lib/utils/format"
+import { withProtectedRoute } from "../../../lib/auth/protected-route"
 
 const transactions = [
   { id: "1", type: "credit", description: "Cashback on order #ORD-2024-001", amount: 250, date: "Nov 20, 2024" },
