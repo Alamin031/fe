@@ -34,6 +34,7 @@ export function Navbar() {
   const [brands, setBrands] = useState<Brand[]>([])
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
   const [isLoadingBrands, setIsLoadingBrands] = useState(true)
+  const [isHydrated, setIsHydrated] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
 
@@ -41,6 +42,10 @@ export function Navbar() {
   const wishlistCount = useWishlistStore((state) => state.items.length)
   const compareCount = useCompareStore((state) => state.items.length)
   const { isAuthenticated, user, logout } = useAuthStore()
+
+  useEffect(() => {
+    setIsHydrated(true)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
