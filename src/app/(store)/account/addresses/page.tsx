@@ -30,7 +30,7 @@ const initialAddresses: Address[] = [
   },
 ]
 
-export default function AddressesPage() {
+function AddressesPage() {
   const [addresses, setAddresses] = useState<Address[]>(initialAddresses)
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null)
