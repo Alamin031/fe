@@ -1,4 +1,5 @@
 import { STORAGE_KEYS } from "./config"
+import AuthService from "./services/auth.service"
 
 export class TokenManager {
   /**
