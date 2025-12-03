@@ -15,6 +15,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { toast } from 'sonner'
 import { productNotifyService, type ProductNotifyRequest } from '../../lib/api/services/notify'
 import { withProtectedRoute } from '../../lib/auth/protected-route'
+import { apiClient } from '../../lib/api/client'
 
 function NotifyProductsPage() {
   const [notifications, setNotifications] = useState<ProductNotifyRequest[]>([])
