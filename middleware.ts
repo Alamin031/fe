@@ -73,6 +73,37 @@ function getTokenFromRequest(request: NextRequest): string | null {
   return token || null
 }
 
+/**
+ * Decode JWT token (without verification - frontend/middleware only)
+ * Used to extract user information from token in middleware
+ */
+function decodeToken(token: string): Record<string, unknown> | null {
+  try {
+    const parts = token.split(".")
+    if (parts.length !== 3) return null
+
+    const payload = JSON.parse(Buffer.from(parts[1], "base64").toString())
+    return payload
+  } catch (error) {
+    return null
+  }
+}
+
+/**
+ * Check if token is expired
+ */
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = decodeToken(token)
+    if (!payload || !payload.exp) return true
+
+    const expirationTime = (payload.exp as number) * 1000
+    return Date.now() >= expirationTime
+  } catch (error) {
+    return true
+  }
+}
+
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const token = getTokenFromRequest(request)
