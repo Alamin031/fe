@@ -84,12 +84,15 @@ export default async function Page() {
           <HeroBanner />
         </section>
 
-        <section className="mx-auto w-full max-w-7xl px-4 py-8">
-          <h2 className="mb-6 text-center text-2xl font-bold tracking-tight">
-            Shop by Category
-          </h2>
-          <CategorySlider categories={normalizedCategories} />
-        </section>
+        {/* Show Shop by Category only if categories exist */}
+        {normalizedCategories.length > 0 && (
+          <section className="mx-auto w-full max-w-7xl px-4 py-8">
+            <h2 className="mb-6 text-center text-2xl font-bold tracking-tight">
+              Shop by Category
+            </h2>
+            <CategorySlider categories={normalizedCategories} />
+          </section>
+        )}
 
         {/* Dynamic Homecategory Sections */}
         {sortedHomecategories.map((hc) => (
@@ -107,10 +110,12 @@ export default async function Page() {
           </section>
         ))}
 
-        {/* Brands */}
-        <section className="mx-auto w-full max-w-7xl px-4 py-12">
-          <BrandSlider brands={brands} />
-        </section>
+        {/* Show Brands section only if brands exist */}
+        {brands.length > 0 && (
+          <section className="mx-auto w-full max-w-7xl px-4 py-12">
+            <BrandSlider brands={brands} />
+          </section>
+        )}
 
         {/* Newsletter / CTA Section */}
         <section className="bg-muted">
