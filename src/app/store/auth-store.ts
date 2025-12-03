@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { User } from "../types"
 import AuthService from "../lib/api/services/auth.service"
+import { TokenManager } from "../lib/api/token-manager"
 
 interface AuthStore {
   user: User | null
