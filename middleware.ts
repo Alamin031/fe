@@ -132,7 +132,7 @@ async function isTokenExpired(token: string): Promise<boolean> {
   }
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const token = getTokenFromRequest(request)
 
@@ -146,8 +146,8 @@ export function middleware(request: NextRequest) {
   const isAuth = isAuthRoute(pathname)
   const isPublic = isPublicRoute(pathname)
 
-  // If token exists, validate it (check expiry)
-  if (token && isTokenExpired(token)) {
+  // If token exists, validate it (check expiry via backend)
+  if (token && await isTokenExpired(token)) {
     // Token is expired, clear it and redirect to login
     const response = NextResponse.redirect(new URL("/login", request.url))
     response.cookies.delete("access_token")
