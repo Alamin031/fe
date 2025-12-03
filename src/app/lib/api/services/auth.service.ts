@@ -102,11 +102,16 @@ export class AuthService {
   }
 
   /**
-   * Get current user info
+   * Get current user info from /users/me endpoint
    */
    async getCurrentUser(): Promise<User> {
-    const response = await apiClient.get<ApiResponse<User>>(API_ENDPOINTS.USERS_ME)
-    return response.data.data!
+    try {
+      const response = await apiClient.get<User>(API_ENDPOINTS.USERS_ME)
+      return response.data
+    } catch (error) {
+      console.error("Failed to fetch current user:", error)
+      throw error
+    }
   }
 
   /**
