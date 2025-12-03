@@ -74,10 +74,10 @@ function getTokenFromRequest(request: NextRequest): string | null {
 }
 
 /**
- * Decode JWT token (without verification - frontend/middleware only)
- * Used to extract user information from token in middleware
+ * Decode JWT token locally (without verification)
+ * Used as fallback if backend endpoint is unavailable
  */
-function decodeToken(token: string): Record<string, unknown> | null {
+function decodeTokenLocally(token: string): Record<string, unknown> | null {
   try {
     const parts = token.split(".")
     if (parts.length !== 3) return null
@@ -90,11 +90,39 @@ function decodeToken(token: string): Record<string, unknown> | null {
 }
 
 /**
+ * Validate token using backend endpoint (POST /auth/decode/{token})
+ * Falls back to local decoding if backend is unavailable
+ */
+async function validateTokenWithBackend(token: string): Promise<Record<string, unknown> | null> {
+  try {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
+    const response = await fetch(`${apiBaseUrl}/auth/decode/${token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (response.ok) {
+      return await response.json()
+    }
+
+    // Fallback to local decoding if backend validation fails
+    return decodeTokenLocally(token)
+  } catch (error) {
+    // If backend is unavailable, fall back to local decoding
+    console.warn("Backend token validation failed, using local decoding:", error)
+    return decodeTokenLocally(token)
+  }
+}
+
+/**
  * Check if token is expired
  */
-function isTokenExpired(token: string): boolean {
+async function isTokenExpired(token: string): Promise<boolean> {
   try {
-    const payload = decodeToken(token)
+    const payload = await validateTokenWithBackend(token)
     if (!payload || !payload.exp) return true
 
     const expirationTime = (payload.exp as number) * 1000
