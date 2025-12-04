@@ -2859,7 +2859,6 @@ function NewProductPage() {
                               <Label>Has Storage Variants</Label>
                             </div>
 
-                            {/* Toggle for using default storages */}
                             {color.hasStorage && (
                               <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                                 <div className="flex items-center gap-2">
@@ -2872,7 +2871,6 @@ function NewProductPage() {
                                         'useDefaultStorages',
                                         checked,
                                       );
-                                      // If switching to custom, add one empty storage
                                       if (
                                         !checked &&
                                         color.storages.length === 0
@@ -3157,7 +3155,6 @@ function NewProductPage() {
             ))}
           </div>
 
-          {/* Specifications */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Specifications</h2>
